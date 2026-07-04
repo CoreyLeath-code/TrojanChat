@@ -1,17 +1,17 @@
 import os
 import sys
 
-# Get the absolute directory where this conftest.py file lives
-current_dir = os.path.dirname(os.path.abspath(__file__))
+# Track down the absolute directory of the tests folder
+tests_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Map one level up to check the root project path context
-root_project_path = os.path.abspath(os.path.join(current_dir, ".."))
-if root_project_path not in sys.path:
-    sys.path.insert(0, root_project_path)
+# Navigate exactly one level up to look at the project root structure
+project_root = os.path.abspath(os.path.join(tests_dir, ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
-# Systematically search downstream folders to handle nested folder structures
-for root, dirs, files in os.walk(root_project_path):
+# Handle nested tracking setups dynamically by scanning for the main app package
+for root, dirs, files in os.walk(project_root):
     if "app" in dirs:
-        target_path = os.path.abspath(root)
-        if target_path not in sys.path:
-            sys.path.insert(0, target_path)
+        resolved_path = os.path.abspath(root)
+        if resolved_path not in sys.path:
+            sys.path.insert(0, resolved_path)
