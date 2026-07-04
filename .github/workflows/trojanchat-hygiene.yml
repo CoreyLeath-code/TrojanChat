@@ -77,7 +77,6 @@ jobs:
 
       - name: Run Async WebSocket & Encrypted Payload Tests
         env:
-          # This maps the absolute root path of the runner workspace to python's import engine
           PYTHONPATH: ${{ github.workspace }}
         run: python -m pytest tests/ -v
 
