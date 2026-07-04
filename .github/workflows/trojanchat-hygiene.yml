@@ -76,9 +76,9 @@ jobs:
           pip install pytest pytest-asyncio websockets cryptography fastapi
 
       - name: Run Async WebSocket & Encrypted Payload Tests
-        run: |
-          # Using python -m explicitly forces python to inject current and sub-folder structures into the path matrix
-          PYTHONPATH=. python -m pytest tests/ -v
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python -m pytest tests/ -v
 
   # 4. Performance Benchmarking / Message Broadcast Latency Tracking
   latency-tracking:
