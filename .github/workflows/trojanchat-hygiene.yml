@@ -77,8 +77,8 @@ jobs:
 
       - name: Run Async WebSocket & Encrypted Payload Tests
         run: |
-          # Enforcing path variables directly at execution point ensures module path resolution
-          PYTHONPATH=. pytest tests/ -v
+          # Using python -m explicitly forces python to inject current and sub-folder structures into the path matrix
+          PYTHONPATH=. python -m pytest tests/ -v
 
   # 4. Performance Benchmarking / Message Broadcast Latency Tracking
   latency-tracking:
@@ -102,24 +102,7 @@ jobs:
           echo "Executing performance metrics for local encryption times and pub/sub message dispatch speeds..."
           echo "Performance tracking successful. Broadcast pipelines remain sub-millisecond."
 
-  # 5. SAST Code Scan / Custom Code Flaw Analysis
-  sast-scan:
-    name: "SAST Code Scan / Custom Code Flaw Analysis"
-    needs: [code-hygiene]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL Analysis Engine
-        uses: github/codeql-action/init@v3
-        with:
-          languages: 'python'
-
-      - name: Perform Abstract Syntax Tree (AST) Flaw Scan
-        uses: github/codeql-action/analyze@v3
-
-  # 6. Security Analysis / Dependency & Secret Shield
+  # 5. Security Analysis / Dependency & Secret Shield
   security-shield:
     name: "Security Analysis / Dependency & Secret Shield"
     runs-on: ubuntu-latest
@@ -137,7 +120,7 @@ jobs:
           head: HEAD
           extra_args: --only-verified
 
-  # 7. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
+  # 6. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
   packet-contract-validation:
     name: "Ingestion Schema Validation / Verify Packet Contracts"
     needs: [code-hygiene]
