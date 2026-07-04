@@ -12,7 +12,10 @@
 ![Realtime Engine](https://img.shields.io/badge/Realtime-WebSockets%20%7C%20Redis-orange?style=flat-square&logo=redis)
 ![SAST Scanning](https://img.shields.io/badge/SAST%20Scan-CodeQL%20Passing-emerald?style=flat-square&logo=githubactions)
 ![Security Shield](https://img.shields.io/badge/Security%20Shield-TruffleHog%20Active-red?style=flat-square&logo=shield)
-
+![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?style=flat-square&logo=python)
+![Asyncio Engine](https://img.shields.io/badge/Engine-Asyncio%20%7C%20FastAPI-009688?style=flat-square&logo=fastapi)
+![Database](https://img.shields.io/badge/Database-PostgreSQL-336791?style=flat-square&logo=postgresql)
+![Docker Mesh](https://img.shields.io/badge/Orchestration-Docker%20Compose-2496ED?style=flat-square&logo=docker)
 
 TrojanChat is a production-hardened, multi-client chat architecture optimized for high-concurrency environments. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
 
