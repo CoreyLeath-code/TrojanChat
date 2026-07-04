@@ -76,9 +76,9 @@ jobs:
           pip install pytest pytest-asyncio websockets cryptography fastapi
 
       - name: Run Async WebSocket & Encrypted Payload Tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        run: python -m pytest tests/ -v
+        run: |
+          # Use specific inline script paths to completely bypass nested directory mismatches
+          PYTHONPATH=. python -m pytest tests/ -v
 
   # 4. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
   packet-contract-validation:
