@@ -6,6 +6,13 @@
 [![Platform Support](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-blue?style=flat-square)](https://github.com/Trojan3877/TrojanChat)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://trojanchat-w8y5magbnc4dv6ubfjhbee.streamlit.app/)
+[![TrojanChat Hygiene Matrix](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml)
+![Security Hygiene](https://img.shields.io/badge/Security%20Hygiene-Enforced-brightgreen?style=flat-square&logo=github)
+![Data Contracts](https://img.shields.io/badge/Data%20Contracts-Payload%20Validated-blue?style=flat-square&logo=pydantic)
+![Realtime Engine](https://img.shields.io/badge/Realtime-WebSockets%20%7C%20Redis-orange?style=flat-square&logo=redis)
+![SAST Scanning](https://img.shields.io/badge/SAST%20Scan-CodeQL%20Passing-emerald?style=flat-square&logo=githubactions)
+![Security Shield](https://img.shields.io/badge/Security%20Shield-TruffleHog%20Active-red?style=flat-square&logo=shield)
+
 
 TrojanChat is a production-hardened, multi-client chat architecture optimized for high-concurrency environments. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
 
