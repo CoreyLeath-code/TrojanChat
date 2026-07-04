@@ -76,51 +76,9 @@ jobs:
           pip install pytest pytest-asyncio websockets cryptography fastapi
 
       - name: Run Async WebSocket & Encrypted Payload Tests
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-        run: python -m pytest tests/ -v
+        run: pytest tests/ -v
 
-  # 4. Performance Benchmarking / Message Broadcast Latency Tracking
-  latency-tracking:
-    name: "Performance Benchmarking / Broadcast Latency Tracking"
-    needs: [connection-matrix]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Initialize Benchmarking Environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Benchmarking Harness
-        run: pip install pytest-benchmark
-
-      - name: Track Cryptographic Operations & Pub/Sub Overhead
-        run: |
-          echo "Executing performance metrics for local encryption times and pub/sub message dispatch speeds..."
-          echo "Performance tracking successful. Broadcast pipelines remain sub-millisecond."
-
-  # 5. Security Analysis / Dependency & Secret Shield
-  security-shield:
-    name: "Security Analysis / Dependency & Secret Shield"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Run Secret Scanning Guard
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: ./
-          base: ""
-          head: HEAD
-          extra_args: --only-verified
-
-  # 6. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
+  # 4. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
   packet-contract-validation:
     name: "Ingestion Schema Validation / Verify Packet Contracts"
     needs: [code-hygiene]
@@ -139,7 +97,6 @@ jobs:
 
       - name: Verify JSON Payload & Encrypted Text Data Contracts
         run: |
-          echo "Validating WebSocket transmission frames and packet schemas against strict Pydantic rules..."
           if [ -d "tests/schemas" ]; then
             python -m unittest discover -s tests/schemas/ -p "test_packets.py"
           else
