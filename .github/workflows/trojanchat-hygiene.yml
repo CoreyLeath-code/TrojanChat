@@ -73,12 +73,10 @@ jobs:
       - name: Install Matrix Dependencies
         run: |
           if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          pip install pytest pytest-asyncio websockets cryptography fastapi
+          pip install pytest pytest-asyncio websockets cryptography fastapi httpx
 
       - name: Run Async WebSocket & Encrypted Payload Tests
-        run: |
-          # Use specific inline script paths to completely bypass nested directory mismatches
-          PYTHONPATH=. python -m pytest tests/ -v
+        run: python -m pytest tests/ -v
 
   # 4. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
   packet-contract-validation:
