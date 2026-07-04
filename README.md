@@ -60,6 +60,21 @@ The platform splits operations across an event-driven system architecture to eli
     python client.py "Corey"
     ```
 
+├── chat_core/
+│   ├── __init__.py
+│   ├── config.py             # <-- Application security settings & validation rules
+│   ├── crypto_broker.py      # <-- Challenge generation and key distribution logic
+│   └── connection_manager.py # <-- Tier 5: High-concurrency socket tracking state loop
+├── deployment/
+│   ├── gateway.conf          # <-- Tier 2: Envoy or Nginx reverse-proxy ingress rules
+│   ├── docker-compose.yml    # <-- Full local container environment mesh (Redis, App, Postgres)
+│   └── Dockerfile            # <-- Minimal production runtime workspace blueprint
+├── tests/
+│   ├── unit/                 # <-- Job #3: Asynchronous socket validation benches
+│   └── schemas/              # <-- Job #7: JSON framing contract tests
+├── dailylog.md               # <-- Maintenance operations history ledger
+└── requirements.txt          # <-- Managed dependencies
+
 
  Engineering Roadmap
 * [ ] **TLS/SSL Implementation:** Wrap connection initializations inside native `ssl.SSLContext` primitives to enforce data encryption in transit.
