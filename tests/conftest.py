@@ -1,17 +1,17 @@
 import os
 import sys
 
-# Compute the runner workspace execution point
-cwd = os.path.abspath(os.path.dirname(__file__))
+# Get the absolute directory where this conftest.py file lives
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Walk up or down to systematically inject the root directory context
-root_dir = os.path.abspath(os.path.join(cwd, ".."))
-if root_dir not in sys.path:
-    sys.path.insert(0, root_dir)
+# Map one level up to check the root project path context
+root_project_path = os.path.abspath(os.path.join(current_dir, ".."))
+if root_project_path not in sys.path:
+    sys.path.insert(0, root_project_path)
 
-# Handle nested tracking (e.g., TrojanChat/TrojanChat parent folder duplications)
-for root, dirs, files in os.walk(root_dir):
+# Systematically search downstream folders to handle nested folder structures
+for root, dirs, files in os.walk(root_project_path):
     if "app" in dirs:
-        full_path = os.path.abspath(root)
-        if full_path not in sys.path:
-            sys.path.insert(0, full_path)
+        target_path = os.path.abspath(root)
+        if target_path not in sys.path:
+            sys.path.insert(0, target_path)
