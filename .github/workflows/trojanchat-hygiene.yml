@@ -76,9 +76,9 @@ jobs:
           pip install pytest pytest-asyncio websockets cryptography fastapi
 
       - name: Run Async WebSocket & Encrypted Payload Tests
-        env:
-          PYTHONPATH: .
-        run: pytest tests/ -v
+        run: |
+          # Enforcing path variables directly at execution point ensures module path resolution
+          PYTHONPATH=. pytest tests/ -v
 
   # 4. Performance Benchmarking / Message Broadcast Latency Tracking
   latency-tracking:
