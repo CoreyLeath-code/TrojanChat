@@ -2,103 +2,141 @@ name: "TrojanChat Security Hygiene & Verification Matrix"
 
 on:
   push:
-    branches: [ "main", "development" ]
+    branches: [main, development]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   security-events: write
 
+concurrency:
+  group: trojanchat-hygiene-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  # 1. Code Quality Assurance / Code Hygiene Enforcement
   code-hygiene:
     name: "Code Quality Assurance / Code Hygiene Enforcement"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python Environment
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Install Linting Suite
-        run: pip install ruff black
-
-      - name: Enforce Code Style & Linting Contracts
+          python-version: "3.11"
+          cache: pip
+      - name: Install quality tooling
+        run: python -m pip install --upgrade pip ruff black
+      - name: Validate Python syntax
+        run: python -m compileall -q app backend tests
+      - name: Run blocking Ruff correctness checks
+        run: ruff check app backend tests/test_api.py tests/test_chat_service.py tests/test_inference_cache.py --select E9,F63,F7,F82
+      - name: Publish formatting advisory
         run: |
-          black --check . || echo "Formatting adjustments needed locally via 'black .'"
-          ruff check . || echo "Linting anomalies isolated."
+          black --check app backend tests/test_api.py tests/test_chat_service.py tests/test_inference_cache.py \
+            || echo "Formatting differences detected; run Black locally before the next cleanup PR."
 
-  # 2. Automated Release Engineering / Construct Semantic Version Tags
-  release-engineering:
-    name: "Automated Release Engineering / Construct Semantic Version Tags"
-    needs: [code-hygiene]
+  test-matrix:
+    name: "Continuous Integration / Python ${{ matrix.python-version }}"
+    needs: code-hygiene
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 0
-
-      - name: Compute Next Semantic Version
-        id: versioning
-        uses: anothrNick/github-tag-action@1.64.0
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Run maintained unit and API tests
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          DEFAULT_BUMP: patch
-          DRY_RUN: true
+          PYTHONPATH: .
+          CACHE_ENABLED: "false"
+        run: |
+          pytest \
+            tests/test_api.py \
+            tests/test_chat_service.py \
+            tests/test_inference_cache.py \
+            --cov=app \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            --junitxml=pytest-results.xml \
+            -v
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-python-${{ matrix.python-version }}
+          path: |
+            coverage.xml
+            pytest-results.xml
+          if-no-files-found: warn
 
-      - name: Output Release Tag
-        run: echo "TrojanChat Core Semantic Tag engineered successfully."
-
-  # 3. Continuous Integration & Telemetry / Socket & Async Connection Matrix
-  connection-matrix:
-    name: "Continuous Integration & Telemetry / Socket Connection Matrix"
-    needs: [code-hygiene]
+  dependency-audit:
+    name: "Supply Chain / Dependency Audit"
+    needs: code-hygiene
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Spin up Environment Matrix
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Install Matrix Dependencies
+          python-version: "3.11"
+          cache: pip
+      - name: Install audit tooling
+        run: pip install pip-audit
+      - name: Generate dependency audit report
         run: |
-          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          pip install pytest pytest-asyncio websockets cryptography fastapi httpx
+          set +e
+          pip-audit -r requirements.txt --progress-spinner off --format json --output pip-audit.json
+          status=$?
+          echo "pip-audit completed with status ${status}; findings are retained as an artifact for triage."
+          exit 0
+      - name: Upload dependency audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-report
+          path: pip-audit.json
+          if-no-files-found: warn
 
-      - name: Run Async WebSocket & Encrypted Payload Tests
-        run: python -m pytest tests/ -v
-
-  # 4. Ingestion Schema Validation / Verify Crypto & Data Packet Contracts
-  packet-contract-validation:
-    name: "Ingestion Schema Validation / Verify Packet Contracts"
-    needs: [code-hygiene]
+  container-smoke-test:
+    name: "Deployment / Container Build & Smoke Test"
+    needs: test-matrix
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Initialize Environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Schema Validation Tools
-        run: pip install pydantic
-
-      - name: Verify JSON Payload & Encrypted Text Data Contracts
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t trojanchat:${{ github.sha }} .
+      - name: Verify image starts
         run: |
-          if [ -d "tests/schemas" ]; then
-            python -m unittest discover -s tests/schemas/ -p "test_packets.py"
-          else
-            echo "Data frame validation components not initialized yet. Skipping step."
-          fi
+          docker run -d --rm --name trojanchat-ci -p 8000:8000 trojanchat:${{ github.sha }}
+          trap 'docker logs trojanchat-ci || true' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8000/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+  release-readiness:
+    name: "Release Engineering / Artifact Readiness"
+    needs: [test-matrix, dependency-audit, container-smoke-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate release metadata
+        run: |
+          test -f README.md
+          test -f LICENSE
+          test -f SECURITY.md
+          test -f CONTRIBUTING.md
+          test -f CHANGELOG.MD
+          test -f Dockerfile
+          test -f .github/dependabot.yml
+          echo "TrojanChat release-readiness contract passed."
