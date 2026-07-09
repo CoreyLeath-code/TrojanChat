@@ -1,5 +1,4 @@
 # TrojanChat
-[![Release](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/release.yml)
 ![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?logo=streamlit&logoColor=white)
