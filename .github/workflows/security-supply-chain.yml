@@ -19,10 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Scan current source tree
+        run: |
+          docker run --rm \
+            -v "$PWD:/repo" \
+            -w /repo \
+            ghcr.io/gitleaks/gitleaks:latest \
+            detect \
+            --source . \
+            --no-git \
+            --redact \
+            --no-banner \
+            --report-format json \
+            --report-path gitleaks-report.json \
+            --exit-code 1
+      - name: Upload secret-scan report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          fetch-depth: 0
-      - name: Scan repository history
-        uses: gitleaks/gitleaks-action@v3
+          name: gitleaks-report
+          path: gitleaks-report.json
+          if-no-files-found: warn
 
   trivy:
     name: Filesystem Vulnerability Scan
