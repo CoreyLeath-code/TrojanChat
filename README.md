@@ -1,9 +1,5 @@
 # TrojanChat
-[![TrojanChat Hygiene Matrix](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml)
-[![Security & Supply Chain](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
-[![CodeQL](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/codeql.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/codeql.yml)
 [![Release](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/release.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/release.yml)
-
 ![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?logo=streamlit&logoColor=white)
