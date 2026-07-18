@@ -7,7 +7,9 @@ WORKDIR /build
 COPY requirements.txt .
 RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --upgrade pip \
-    && /opt/venv/bin/pip install -r requirements.txt
+    && /opt/venv/bin/pip install -r requirements.txt \
+    && /opt/venv/bin/pip uninstall --yes setuptools wheel \
+    && /opt/venv/bin/pip uninstall --yes pip
 
 FROM python:3.11-slim AS runtime
 
