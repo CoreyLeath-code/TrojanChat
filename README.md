@@ -4,6 +4,11 @@
 [![Security](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
 [![CodeQL](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/codeql.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/codeql.yml)
 [![Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag)](https://github.com/CoreyLeath-code/TrojanChat/releases)
+[![Coverage](https://img.shields.io/badge/critical--path%20coverage-92.57%25-success)](#engineering-evidence)
+[![Throughput](https://img.shields.io/badge/throughput-40%2C326.50%20msg%2Fs-blue)](#research-benchmark)
+[![Peak memory](https://img.shields.io/badge/peak%20memory-4.228%20MiB-blueviolet)](#research-benchmark)
+[![Memory improvement](https://img.shields.io/badge/memory%20reduction-80.06%25-success)](#research-benchmark)
+[![Benchmark date](https://img.shields.io/badge/benchmark-2026--07--18-informational)](benchmarks/benchmark_report.md)
 ![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?logo=streamlit&logoColor=white)
@@ -53,6 +58,30 @@ and a 10,000-message retention bound. Results describe this microbenchmarkâ€�
 latency or a production SLO. See the [benchmark methodology](benchmarks/benchmark_report.md),
 [audit](docs/AUDIT.md), [architecture](ARCHITECTURE.md), [deployment guide](DEPLOYMENT.MD), and
 [production checklist](docs/PRODUCTION_CHECKLIST.md).
+
+## Research benchmark
+
+**Question.** Can bounded, synchronized retention stop unbounded memory growth without exceeding a
+15% write-throughput regression budget?
+
+| Metric | Legacy list | Bounded, synchronized store | Relative change |
+|---|---:|---:|---:|
+| Mean latency / 50k writes | 1,141.831 ms | 1,237.607 ms | +8.4% |
+| Median latency / 50k writes | 1,155.519 ms | 1,239.880 ms | +7.3% |
+| P95 / P99 latency | 1,221.577 ms | 1,303.501 ms | +6.7% |
+| Minimum / maximum latency | 1,063.323 / 1,221.577 ms | 1,180.249 / 1,303.501 ms | observed range |
+| Throughput | 43,270.60 msg/s | 40,326.50 msg/s | **âˆ’6.8%** |
+| Peak Python allocations | 21.205 MiB | 4.228 MiB | **âˆ’80.06%** |
+
+**Method.** Seven independent iterations insert 50,000 structurally identical messages. Both
+variants generate UUID4 identifiers and UTC timestamps; only storage and synchronization differ.
+Latency uses `time.perf_counter`, memory uses `tracemalloc`, and throughput is derived from median
+elapsed time. The raw, versioned result is [`benchmarks/latest.json`](benchmarks/latest.json).
+
+**Interpretation.** The optimized store remains inside the pre-declared 15% throughput budget while
+substantially reducing peak Python allocations. The experiment does not measure network transport,
+JSON serialization, Redis, database persistence, multi-process contention, CPU utilization, or RSS.
+CI reruns the benchmark on Ubuntu/Python 3.11 and uploads the raw result for per-commit comparison.
 
 ---
 
