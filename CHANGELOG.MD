@@ -5,7 +5,7 @@ All notable changes to TrojanChat will be documented in this file.
 ### Added
 - Reproducible before/after latency, throughput, and peak-memory benchmark with raw JSON evidence.
 - Unit and integration tests for bounded storage, negative API cases, and WebSocket lifecycle.
-- CodeQL workflow, blocking static/security scans, audit, and production checklist.
+- CodeQL default-setup documentation, blocking static/security scans, audit, and production checklist.
 
 ### Changed
 - Canonical critical-path coverage is enforced at 90%.
