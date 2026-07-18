@@ -17,6 +17,7 @@ All notable changes to TrojanChat will be documented in this file.
 ### Security
 - Sanitized internal errors and changed dependency/Trivy findings from advisory to blocking.
 - Upgraded Next.js from 14.2.15 to 15.5.20 to remove current HIGH-severity advisories; added a blocking frontend audit and production build.
+- Removed pip/setuptools/wheel build tooling from the runtime image and constrained SARIF output to the declared HIGH/CRITICAL policy.
 
 ## [0.2.0] - 2026-04-02
 ### Changed
