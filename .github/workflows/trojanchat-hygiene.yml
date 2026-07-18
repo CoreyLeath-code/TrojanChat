@@ -117,6 +117,26 @@ jobs:
           path: pip-audit.json
           if-no-files-found: warn
 
+  frontend-build:
+    name: "Continuous Integration / Frontend Build"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Enforce high-severity dependency audit
+        run: npm audit --audit-level=high
+      - name: Build production frontend
+        run: npm run build
+
   container-smoke-test:
     name: "Deployment / Container Build & Smoke Test"
     needs: test-matrix
@@ -139,7 +159,7 @@ jobs:
 
   release-readiness:
     name: "Release Engineering / Artifact Readiness"
-    needs: [test-matrix, dependency-audit, container-smoke-test]
+    needs: [test-matrix, dependency-audit, frontend-build, container-smoke-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
