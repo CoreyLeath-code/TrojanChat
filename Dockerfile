@@ -18,7 +18,11 @@ ENV PATH=/opt/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-RUN useradd --create-home --uid 10001 appuser
+# The base image ships build tooling that is unnecessary at runtime. Removing it
+# also prevents scanners from treating setuptools' vendored build dependencies
+# as remotely exploitable application packages.
+RUN python -m pip uninstall --yes setuptools wheel \
+    && useradd --create-home --uid 10001 appuser
 WORKDIR /app
 
 COPY --from=builder /opt/venv /opt/venv
