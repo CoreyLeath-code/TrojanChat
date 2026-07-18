@@ -55,7 +55,7 @@ jobs:
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v4
         with:
@@ -88,4 +88,4 @@ jobs:
           format: table
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
