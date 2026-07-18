@@ -11,7 +11,7 @@ and makes its evidence enforceable rather than aspirational.
 
 - Dependency-injected AI tests avoid network calls and credentials.
 - Non-root multi-stage container with an HTTP health check.
-- Dependabot, SBOM, secret scan, Trivy, CodeQL, and tag-driven release automation.
+- Dependabot, SBOM, secret scan, Trivy, CodeQL default setup, and tag-driven release automation.
 - Cache failures are designed to fail open without blocking inference.
 
 ## Findings and disposition
