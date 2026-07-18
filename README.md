@@ -2,7 +2,7 @@
 [![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml)
 [![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
 [![Security](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
-[![CodeQL](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/codeql.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/codeql.yml)
+[![CodeQL](https://img.shields.io/badge/CodeQL-default%20setup-enabled-2F80ED?logo=github)](https://github.com/CoreyLeath-code/TrojanChat/security/code-scanning)
 [![Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag)](https://github.com/CoreyLeath-code/TrojanChat/releases)
 [![Coverage](https://img.shields.io/badge/critical--path%20coverage-92.57%25-success)](#engineering-evidence)
 [![Throughput](https://img.shields.io/badge/throughput-40%2C326.50%20msg%2Fs-blue)](#research-benchmark)
