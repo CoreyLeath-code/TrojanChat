@@ -20,6 +20,7 @@ and makes its evidence enforceable rather than aspirational.
 |---|---|---|
 | P0 | Benchmark workflow reported success and â€œsub-millisecondâ€ performance without running a benchmark | Replaced with reproducible latency/throughput/memory comparison and artifact |
 | P1 | Dependency and vulnerability findings did not fail CI | Audits and HIGH/CRITICAL Trivy findings now block |
+| P1 | Frontend lock contained vulnerable Next.js 14.2.15 | Upgraded to 15.5.20; locked npm audit and production build now required |
 | P1 | Coverage was reported but had no minimum | Canonical critical path now fails below 90% |
 | P1 | Message history grew without bound | Bounded retention with configurable `CHAT_HISTORY_LIMIT` |
 | P1 | Message fields and history limit were unbounded | Strict username/content/query validation added |
