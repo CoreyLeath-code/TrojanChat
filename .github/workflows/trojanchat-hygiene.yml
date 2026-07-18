@@ -35,7 +35,7 @@ jobs:
           bandit -q backend/api.py backend/config.py backend/routes/*.py backend/services/*.py app/core/inference_cache.py app/core/security.py app/services/chat_service.py -f json -o bandit-report.json
       - name: Upload static-analysis report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: static-analysis-report
           path: bandit-report.json
@@ -87,7 +87,7 @@ jobs:
             -v
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports-python-${{ matrix.python-version }}
           path: |
@@ -111,7 +111,7 @@ jobs:
         run: |
           pip-audit -r requirements.txt --progress-spinner off --format json --output pip-audit.json
       - name: Upload dependency audit
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pip-audit-report
           path: pip-audit.json
