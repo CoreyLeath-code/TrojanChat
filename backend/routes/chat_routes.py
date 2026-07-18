@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
+
 from backend.services.chat_service import ChatService
 
 router = APIRouter()
@@ -11,8 +12,9 @@ chat_service = ChatService()
 # -------------------------------------------
 
 class MessageRequest(BaseModel):
-    username: str
-    content: str
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    username: str = Field(min_length=1, max_length=32, pattern=r"^[\w .'-]+$")
+    content: str = Field(min_length=1, max_length=2_000)
 
 
 class MessageResponse(BaseModel):
@@ -37,8 +39,8 @@ async def send_message(message: MessageRequest):
             content=message.content
         )
         return new_message
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Message store unavailable") from exc
 
 
 @router.get("/history")
@@ -47,7 +49,11 @@ async def get_message_history(limit: int = 50):
     Returns the latest N chat messages.
     """
     try:
+        if not 1 <= limit <= 200:
+            raise HTTPException(status_code=422, detail="limit must be between 1 and 200")
         messages = chat_service.get_messages(limit=limit)
         return messages
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=503, detail="Message store unavailable") from exc

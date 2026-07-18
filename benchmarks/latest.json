@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at_utc": "2026-07-18T19:23:33.494656+00:00",
+  "parameters": {
+    "samples": 50000,
+    "iterations": 7,
+    "retention": 10000
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "baseline": {
+    "latency_mean_ms": 1141.831,
+    "latency_median_ms": 1155.519,
+    "latency_p95_ms": 1221.577,
+    "latency_p99_ms": 1221.577,
+    "latency_min_ms": 1063.323,
+    "latency_max_ms": 1221.577,
+    "throughput_messages_per_second": 43270.6,
+    "peak_memory_mib": 21.205
+  },
+  "optimized": {
+    "latency_mean_ms": 1237.607,
+    "latency_median_ms": 1239.88,
+    "latency_p95_ms": 1303.501,
+    "latency_p99_ms": 1303.501,
+    "latency_min_ms": 1180.249,
+    "latency_max_ms": 1303.501,
+    "throughput_messages_per_second": 40326.5,
+    "peak_memory_mib": 4.228
+  },
+  "comparison": {
+    "throughput_change_percent": -6.8,
+    "peak_memory_change_percent": -80.06
+  }
+}
