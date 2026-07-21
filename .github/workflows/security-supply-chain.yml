@@ -35,7 +35,7 @@ jobs:
             --exit-code 1
       - name: Upload secret-scan report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gitleaks-report
           path: gitleaks-report.json
@@ -72,7 +72,7 @@ jobs:
           path: .
           format: cyclonedx-json
           output-file: sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: trojanchat-sbom
           path: sbom.cdx.json
