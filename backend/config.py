@@ -18,7 +18,7 @@ class Settings:
     API_VERSION: str = "v1"
 
     # Local development settings
-    HOST: str = os.getenv("HOST", "0.0.0.0")
+    HOST: str = os.getenv("HOST", "127.0.0.1")
     PORT: int = int(os.getenv("PORT", "10000"))
 
 settings = Settings()

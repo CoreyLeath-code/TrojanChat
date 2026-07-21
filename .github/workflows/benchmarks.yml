@@ -12,27 +12,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Initialize Benchmarking Environment
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Performance Harness Dependencies
-        run: |
-          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
-          pip install pytest pytest-benchmark pytest-asyncio websockets cryptography fastapi
+      - name: Install benchmark dependencies
+        run: pip install -r requirements-dev.txt
 
       - name: Execute Profiling Suite & Track Latency Metrics
         env:
           PYTHONPATH: .
         run: |
-          echo "Executing high-concurrency message broadcast and cryptographic routine benchmarks..."
-          # Runs benchmarks if present, otherwise outputs structured system performance logging
-          if [ -d "tests/benchmarks" ]; then
-            pytest tests/benchmarks/ --benchmark-json=output.json
-          else
-            echo "Executing isolated performance profile for local encryption times and pub/sub message dispatch speeds..."
-            echo "Performance metrics captured successfully. Broadcast pipelines remain sub-millisecond."
-          fi
+          python -m benchmarks.run_benchmark --output benchmarks/latest.json
+          python -m pytest tests/test_benchmark.py -q
+          python - <<'PY'
+          import json
+          result = json.load(open("benchmarks/latest.json", encoding="utf-8"))
+          regression = result["comparison"]["throughput_change_percent"]
+          if regression < -15:
+              raise SystemExit(f"Throughput regression {regression}% exceeds 15% budget")
+          PY
+      - name: Upload benchmark evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-report
+          path: |
+            benchmarks/latest.json
+            benchmarks/benchmark_report.md

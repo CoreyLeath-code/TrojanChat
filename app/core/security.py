@@ -2,9 +2,9 @@
 
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
-from jose import JWTError, jwt
+import jwt
+from jwt import InvalidTokenError
 from passlib.context import CryptContext
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -27,7 +27,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
 
     expire = datetime.now(timezone.utc) + (
@@ -42,5 +42,5 @@ def verify_token(token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
-    except JWTError:
+    except InvalidTokenError:
         return None

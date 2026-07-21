@@ -1,23 +1,87 @@
 # TrojanChat
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)](https://github.com/Trojan3877/TrojanChat/actions)
-[![Security Status](https://img.shields.io/badge/security-passed-brightgreen?style=flat-square)](https://github.com/PyCQA/bandit)
-[![Production Ready](https://img.shields.io/badge/status-production--ready-brightgreen?style=flat-square)](https://github.com/Trojan3877/TrojanChat)
-[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
-[![Platform Support](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-blue?style=flat-square)](https://github.com/Trojan3877/TrojanChat)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://trojanchat-w8y5magbnc4dv6ubfjhbee.streamlit.app/)
-[![TrojanChat Hygiene Matrix](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml)
-![Security Hygiene](https://img.shields.io/badge/Security%20Hygiene-Enforced-brightgreen?style=flat-square&logo=github)
-![Data Contracts](https://img.shields.io/badge/Data%20Contracts-Payload%20Validated-blue?style=flat-square&logo=pydantic)
-![Realtime Engine](https://img.shields.io/badge/Realtime-WebSockets%20%7C%20Redis-orange?style=flat-square&logo=redis)
-![SAST Scanning](https://img.shields.io/badge/SAST%20Scan-CodeQL%20Passing-emerald?style=flat-square&logo=githubactions)
-![Security Shield](https://img.shields.io/badge/Security%20Shield-TruffleHog%20Active-red?style=flat-square&logo=shield)
-![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue?style=flat-square&logo=python)
-![Asyncio Engine](https://img.shields.io/badge/Engine-Asyncio%20%7C%20FastAPI-009688?style=flat-square&logo=fastapi)
-![Database](https://img.shields.io/badge/Database-PostgreSQL-336791?style=flat-square&logo=postgresql)
-![Docker Mesh](https://img.shields.io/badge/Orchestration-Docker%20Compose-2496ED?style=flat-square&logo=docker)
+[![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml)
+[![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
+[![Security](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
+[![CodeQL](https://img.shields.io/badge/CodeQL-default%20setup-enabled-2F80ED?logo=github)](https://github.com/CoreyLeath-code/TrojanChat/security/code-scanning)
+[![Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag)](https://github.com/CoreyLeath-code/TrojanChat/releases)
+[![Coverage](https://img.shields.io/badge/critical--path%20coverage-92.57%25-success)](#engineering-evidence)
+[![Throughput](https://img.shields.io/badge/throughput-40%2C326.50%20msg%2Fs-blue)](#research-benchmark)
+[![Peak memory](https://img.shields.io/badge/peak%20memory-4.228%20MiB-blueviolet)](#research-benchmark)
+[![Memory improvement](https://img.shields.io/badge/memory%20reduction-80.06%25-success)](#research-benchmark)
+[![Benchmark date](https://img.shields.io/badge/benchmark-2026--07--18-informational)](benchmarks/benchmark_report.md)
+![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?logo=streamlit&logoColor=white)
+![WebSockets](https://img.shields.io/badge/WebSockets-Realtime-010101)
+![Docker](https://img.shields.io/badge/Docker-Multi--Stage%20Non--Root-2496ED?logo=docker&logoColor=white)
+![GHCR](https://img.shields.io/badge/GHCR-Container%20Publishing-24292F?logo=github&logoColor=white)
+![Pytest](https://img.shields.io/badge/Tests-Pytest-0A9EDC?logo=pytest&logoColor=white)
+![Coverage](https://img.shields.io/badge/Coverage-XML%20Artifacts-success)
+![Ruff](https://img.shields.io/badge/Ruff-Correctness%20Gate-D7FF64)
+![Black](https://img.shields.io/badge/Black-Formatting%20Advisory-000000)
+![JUnit](https://img.shields.io/badge/JUnit-Test%20Artifacts-blue)
+![CodeQL](https://img.shields.io/badge/CodeQL-Static%20Analysis-2F80ED?logo=github&logoColor=white)
+![Gitleaks](https://img.shields.io/badge/Gitleaks-Secret%20Scanning-orange)
+![Trivy](https://img.shields.io/badge/Trivy-Filesystem%20%2B%20Container%20Scanning-1904DA)
+![SBOM](https://img.shields.io/badge/SBOM-CycloneDX-2D9CDB)
+![Dependabot](https://img.shields.io/badge/Dependabot-Python%20%7C%20Actions%20%7C%20Docker-025E8C?logo=dependabot&logoColor=white)
+![pip-audit](https://img.shields.io/badge/pip--audit-Dependency%20Audit-blueviolet)
+![Release](https://img.shields.io/badge/Release-GitHub%20Artifacts-success)
+![Semantic Versioning](https://img.shields.io/badge/SemVer-Tag%20Driven-orange)
+![Security Policy](https://img.shields.io/badge/Security-Policy%20Added-success)
+![Contributing](https://img.shields.io/badge/Contributing-Guidelines%20Added-blue)
+![L6 Hygiene](https://img.shields.io/badge/L6%20Hygiene-9--Tier%20Deployment%20Model-gold)
+![License](https://img.shields.io/github/license/CoreyLeath-code/TrojanChat)
+![Last Commit](https://img.shields.io/github/last-commit/CoreyLeath-code/TrojanChat)
+![Repo Size](https://img.shields.io/github/repo-size/CoreyLeath-code/TrojanChat)
+![Issues](https://img.shields.io/github/issues/CoreyLeath-code/TrojanChat)
+![Pull Requests](https://img.shields.io/github/issues-pr/CoreyLeath-code/TrojanChat)
+![Stars](https://img.shields.io/github/stars/CoreyLeath-code/TrojanChat?style=social)
 
 TrojanChat is a production-hardened, multi-client chat architecture optimized for high-concurrency environments. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
+
+## Engineering evidence
+
+| Evidence | Current result | Enforcement |
+|---|---:|---|
+| Unit + integration tests | 30 passing locally | Python 3.11/3.12 CI matrix |
+| Critical-path coverage | 92.57% | CI fails below 90% |
+| Median / P99 write latency | 1,239.880 / 1,303.501 ms per 50k-message run | Reproducible benchmark artifact |
+| Throughput | 40,326.50 messages/s | Regression budget: no worse than -15% |
+| Peak Python memory | 4.228 MiB | 80.06% below legacy baseline |
+| Static analysis | Ruff + Bandit | Blocking; JSON report retained |
+| Security | CodeQL, Gitleaks, pip-audit, Trivy | Blocking on secrets and actionable vulnerabilities |
+| Supply chain | CycloneDX SBOM + Dependabot | Artifact per run; weekly updates |
+
+The reference benchmark uses Windows 11, Python 3.12.13, 50,000 messages, seven iterations,
+and a 10,000-message retention bound. Results describe this microbenchmarkâ€”not end-to-end network
+latency or a production SLO. See the [benchmark methodology](benchmarks/benchmark_report.md),
+[audit](docs/AUDIT.md), [architecture](ARCHITECTURE.md), [deployment guide](DEPLOYMENT.MD), and
+[production checklist](docs/PRODUCTION_CHECKLIST.md).
+
+## Research benchmark
+
+**Question.** Can bounded, synchronized retention stop unbounded memory growth without exceeding a
+15% write-throughput regression budget?
+
+| Metric | Legacy list | Bounded, synchronized store | Relative change |
+|---|---:|---:|---:|
+| Mean latency / 50k writes | 1,141.831 ms | 1,237.607 ms | +8.4% |
+| Median latency / 50k writes | 1,155.519 ms | 1,239.880 ms | +7.3% |
+| P95 / P99 latency | 1,221.577 ms | 1,303.501 ms | +6.7% |
+| Minimum / maximum latency | 1,063.323 / 1,221.577 ms | 1,180.249 / 1,303.501 ms | observed range |
+| Throughput | 43,270.60 msg/s | 40,326.50 msg/s | **âˆ’6.8%** |
+| Peak Python allocations | 21.205 MiB | 4.228 MiB | **âˆ’80.06%** |
+
+**Method.** Seven independent iterations insert 50,000 structurally identical messages. Both
+variants generate UUID4 identifiers and UTC timestamps; only storage and synchronization differ.
+Latency uses `time.perf_counter`, memory uses `tracemalloc`, and throughput is derived from median
+elapsed time. The raw, versioned result is [`benchmarks/latest.json`](benchmarks/latest.json).
+
+**Interpretation.** The optimized store remains inside the pre-declared 15% throughput budget while
+substantially reducing peak Python allocations. The experiment does not measure network transport,
+JSON serialization, Redis, database persistence, multi-process contention, CPU utilization, or RSS.
+CI reruns the benchmark on Ubuntu/Python 3.11 and uploads the raw result for per-commit comparison.
 
 ---
 
@@ -34,7 +98,7 @@ The platform splits operations across an event-driven system architecture to eli
 
 ---
 
-## 🚀 Getting Started
+## ðŸš€ Getting Started
 
 ### Prerequisites
 * Python 3.11 or higher
@@ -63,20 +127,20 @@ The platform splits operations across an event-driven system architecture to eli
     python client.py "Corey"
     ```
 
-├── chat_core/
-│   ├── __init__.py
-│   ├── config.py             # <-- Application security settings & validation rules
-│   ├── crypto_broker.py      # <-- Challenge generation and key distribution logic
-│   └── connection_manager.py # <-- Tier 5: High-concurrency socket tracking state loop
-├── deployment/
-│   ├── gateway.conf          # <-- Tier 2: Envoy or Nginx reverse-proxy ingress rules
-│   ├── docker-compose.yml    # <-- Full local container environment mesh (Redis, App, Postgres)
-│   └── Dockerfile            # <-- Minimal production runtime workspace blueprint
-├── tests/
-│   ├── unit/                 # <-- Job #3: Asynchronous socket validation benches
-│   └── schemas/              # <-- Job #7: JSON framing contract tests
-├── dailylog.md               # <-- Maintenance operations history ledger
-└── requirements.txt          # <-- Managed dependencies
+â”œâ”€â”€ chat_core/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”œâ”€â”€ config.py             # <-- Application security settings & validation rules
+â”‚   â”œâ”€â”€ crypto_broker.py      # <-- Challenge generation and key distribution logic
+â”‚   â””â”€â”€ connection_manager.py # <-- Tier 5: High-concurrency socket tracking state loop
+â”œâ”€â”€ deployment/
+â”‚   â”œâ”€â”€ gateway.conf          # <-- Tier 2: Envoy or Nginx reverse-proxy ingress rules
+â”‚   â”œâ”€â”€ docker-compose.yml    # <-- Full local container environment mesh (Redis, App, Postgres)
+â”‚   â””â”€â”€ Dockerfile            # <-- Minimal production runtime workspace blueprint
+â”œâ”€â”€ tests/
+â”‚   â”œâ”€â”€ unit/                 # <-- Job #3: Asynchronous socket validation benches
+â”‚   â””â”€â”€ schemas/              # <-- Job #7: JSON framing contract tests
+â”œâ”€â”€ dailylog.md               # <-- Maintenance operations history ledger
+â””â”€â”€ requirements.txt          # <-- Managed dependencies
 
 
  Engineering Roadmap

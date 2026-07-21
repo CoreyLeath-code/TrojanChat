@@ -20,17 +20,25 @@ jobs:
     name: "Code Quality Assurance / Code Hygiene Enforcement"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
       - name: Install quality tooling
-        run: python -m pip install --upgrade pip ruff black
+        run: python -m pip install --upgrade pip ruff black bandit
       - name: Validate Python syntax
         run: python -m compileall -q app backend tests
-      - name: Run blocking Ruff correctness checks
-        run: ruff check app backend tests/test_api.py tests/test_chat_service.py tests/test_inference_cache.py --select E9,F63,F7,F82
+      - name: Run blocking Ruff and Bandit checks
+        run: |
+          ruff check backend/api.py backend/routes backend/services app/core/security.py benchmarks tests/test_api.py tests/test_backend_hardening.py tests/test_benchmark.py tests/test_security.py
+          bandit -q backend/api.py backend/config.py backend/routes/*.py backend/services/*.py app/core/inference_cache.py app/core/security.py app/services/chat_service.py -f json -o bandit-report.json
+      - name: Upload static-analysis report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-analysis-report
+          path: bandit-report.json
       - name: Publish formatting advisory
         run: |
           black --check app backend tests/test_api.py tests/test_chat_service.py tests/test_inference_cache.py \
@@ -45,7 +53,7 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -63,7 +71,16 @@ jobs:
             tests/test_api.py \
             tests/test_chat_service.py \
             tests/test_inference_cache.py \
-            --cov=app \
+            tests/test_backend_hardening.py \
+            tests/test_benchmark.py \
+            tests/test_security.py \
+            --cov=backend.api \
+            --cov=backend.routes.chat_routes \
+            --cov=backend.routes.ws_routes \
+            --cov=backend.services.chat_service \
+            --cov=app.core.inference_cache \
+            --cov=app.services.chat_service \
+            --cov-fail-under=90 \
             --cov-report=term-missing \
             --cov-report=xml \
             --junitxml=pytest-results.xml \
@@ -83,20 +100,16 @@ jobs:
     needs: code-hygiene
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
       - name: Install audit tooling
         run: pip install pip-audit
-      - name: Generate dependency audit report
+      - name: Enforce dependency audit
         run: |
-          set +e
           pip-audit -r requirements.txt --progress-spinner off --format json --output pip-audit.json
-          status=$?
-          echo "pip-audit completed with status ${status}; findings are retained as an artifact for triage."
-          exit 0
       - name: Upload dependency audit
         uses: actions/upload-artifact@v4
         with:
@@ -104,12 +117,32 @@ jobs:
           path: pip-audit.json
           if-no-files-found: warn
 
+  frontend-build:
+    name: "Continuous Integration / Frontend Build"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Enforce high-severity dependency audit
+        run: npm audit --audit-level=high
+      - name: Build production frontend
+        run: npm run build
+
   container-smoke-test:
     name: "Deployment / Container Build & Smoke Test"
     needs: test-matrix
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build image
         run: docker build -t trojanchat:${{ github.sha }} .
       - name: Verify image starts
@@ -126,10 +159,10 @@ jobs:
 
   release-readiness:
     name: "Release Engineering / Artifact Readiness"
-    needs: [test-matrix, dependency-audit, container-smoke-test]
+    needs: [test-matrix, dependency-audit, frontend-build, container-smoke-test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Validate release metadata
         run: |
           test -f README.md

@@ -18,7 +18,7 @@ jobs:
     name: Secret Scanning
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Scan current source tree
         run: |
           docker run --rm \
@@ -45,7 +45,7 @@ jobs:
     name: Filesystem Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Generate SARIF report
         uses: aquasecurity/trivy-action@master
         with:
@@ -54,8 +54,9 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
+          limit-severities-for-sarif: true
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
       - name: Upload SARIF
         uses: github/codeql-action/upload-sarif@v4
         with:
@@ -65,7 +66,7 @@ jobs:
     name: Generate CycloneDX SBOM
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: anchore/sbom-action@v0
         with:
           path: .
@@ -80,7 +81,7 @@ jobs:
     name: Container Image Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: docker build -t trojanchat:security .
       - uses: aquasecurity/trivy-action@master
         with:
@@ -88,4 +89,4 @@ jobs:
           format: table
           severity: HIGH,CRITICAL
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"

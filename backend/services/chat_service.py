@@ -1,7 +1,9 @@
-import uuid
 import datetime
+import os
+import threading
+import uuid
+from collections import deque
 from datetime import timezone
-from backend.config import settings
 
 
 class ChatService:
@@ -11,10 +13,16 @@ class ChatService:
     to be upgraded easily to Firebase, Redis, or SQL.
     """
 
-    def __init__(self):
-        # Temporary in-memory message store
-        # Structure: { "id": str, "username": str, "content": str, "timestamp": str }
-        self.messages = []
+    def __init__(self, max_messages: int | None = None):
+        """Create a bounded, thread-safe store for one process.
+
+        A durable shared store is still required for multi-instance production deployments.
+        """
+        configured_limit = max_messages or int(os.getenv("CHAT_HISTORY_LIMIT", "10000"))
+        if configured_limit < 1:
+            raise ValueError("max_messages must be positive")
+        self.messages = deque(maxlen=configured_limit)
+        self._lock = threading.RLock()
 
     def _generate_message_id(self):
         """
@@ -44,7 +52,8 @@ class ChatService:
         }
 
         # In-memory storage (can replace with Firebase/Postgres/etc.)
-        self.messages.append(message)
+        with self._lock:
+            self.messages.append(message)
 
         return message
 
@@ -52,4 +61,7 @@ class ChatService:
         """
         Returns the latest 'limit' chat messages.
         """
-        return self.messages[-limit:]
+        if limit < 1:
+            return []
+        with self._lock:
+            return list(self.messages)[-limit:]
