@@ -1,42 +1,46 @@
 # TrojanChat
-[![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml)
-[![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
-[![Security](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
-[![CodeQL](https://img.shields.io/badge/CodeQL-default%20setup-enabled-2F80ED?logo=github)](https://github.com/CoreyLeath-code/TrojanChat/security/code-scanning)
-[![Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag)](https://github.com/CoreyLeath-code/TrojanChat/releases)
-[![Coverage](https://img.shields.io/badge/critical--path%20coverage-92.57%25-success)](#engineering-evidence)
-[![Throughput](https://img.shields.io/badge/throughput-40%2C326.50%20msg%2Fs-blue)](#research-benchmark)
-[![Peak memory](https://img.shields.io/badge/peak%20memory-4.228%20MiB-blueviolet)](#research-benchmark)
-[![Memory improvement](https://img.shields.io/badge/memory%20reduction-80.06%25-success)](#research-benchmark)
-[![Benchmark date](https://img.shields.io/badge/benchmark-2026--07--18-informational)](benchmarks/benchmark_report.md)
-![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Frontend-FF4B4B?logo=streamlit&logoColor=white)
-![WebSockets](https://img.shields.io/badge/WebSockets-Realtime-010101)
-![Docker](https://img.shields.io/badge/Docker-Multi--Stage%20Non--Root-2496ED?logo=docker&logoColor=white)
-![GHCR](https://img.shields.io/badge/GHCR-Container%20Publishing-24292F?logo=github&logoColor=white)
-![Pytest](https://img.shields.io/badge/Tests-Pytest-0A9EDC?logo=pytest&logoColor=white)
-![Coverage](https://img.shields.io/badge/Coverage-XML%20Artifacts-success)
-![Ruff](https://img.shields.io/badge/Ruff-Correctness%20Gate-D7FF64)
-![Black](https://img.shields.io/badge/Black-Formatting%20Advisory-000000)
-![JUnit](https://img.shields.io/badge/JUnit-Test%20Artifacts-blue)
-![CodeQL](https://img.shields.io/badge/CodeQL-Static%20Analysis-2F80ED?logo=github&logoColor=white)
-![Gitleaks](https://img.shields.io/badge/Gitleaks-Secret%20Scanning-orange)
-![Trivy](https://img.shields.io/badge/Trivy-Filesystem%20%2B%20Container%20Scanning-1904DA)
-![SBOM](https://img.shields.io/badge/SBOM-CycloneDX-2D9CDB)
-![Dependabot](https://img.shields.io/badge/Dependabot-Python%20%7C%20Actions%20%7C%20Docker-025E8C?logo=dependabot&logoColor=white)
-![pip-audit](https://img.shields.io/badge/pip--audit-Dependency%20Audit-blueviolet)
-![Release](https://img.shields.io/badge/Release-GitHub%20Artifacts-success)
-![Semantic Versioning](https://img.shields.io/badge/SemVer-Tag%20Driven-orange)
-![Security Policy](https://img.shields.io/badge/Security-Policy%20Added-success)
-![Contributing](https://img.shields.io/badge/Contributing-Guidelines%20Added-blue)
-![L6 Hygiene](https://img.shields.io/badge/L6%20Hygiene-9--Tier%20Deployment%20Model-gold)
-![License](https://img.shields.io/github/license/CoreyLeath-code/TrojanChat)
-![Last Commit](https://img.shields.io/github/last-commit/CoreyLeath-code/TrojanChat)
-![Repo Size](https://img.shields.io/github/repo-size/CoreyLeath-code/TrojanChat)
-![Issues](https://img.shields.io/github/issues/CoreyLeath-code/TrojanChat)
-![Pull Requests](https://img.shields.io/github/issues-pr/CoreyLeath-code/TrojanChat)
-![Stars](https://img.shields.io/github/stars/CoreyLeath-code/TrojanChat?style=social)
+<p align="center">
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml">
+    <img src="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg?branch=main" alt="CI">
+  </a>
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml">
+    <img src="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=main" alt="Benchmarks">
+  </a>
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml">
+    <img src="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=main" alt="Security">
+  </a>
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/security/code-scanning">
+    <img src="https://img.shields.io/badge/CodeQL-enabled-2F80ED?logo=github&logoColor=white" alt="CodeQL">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/Streamlit-frontend-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
+  <img src="https://img.shields.io/badge/Docker-non--root-2496ED?logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/SBOM-CycloneDX-2D9CDB" alt="CycloneDX SBOM">
+</p>
+
+<p align="center">
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/releases">
+    <img src="https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?include_prereleases&sort=semver" alt="Release">
+  </a>
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/CoreyLeath-code/TrojanChat" alt="License">
+  </a>
+  <img src="https://img.shields.io/github/last-commit/CoreyLeath-code/TrojanChat/main" alt="Last commit">
+  <img src="https://img.shields.io/github/repo-size/CoreyLeath-code/TrojanChat" alt="Repository size">
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/issues">
+    <img src="https://img.shields.io/github/issues/CoreyLeath-code/TrojanChat" alt="Open issues">
+  </a>
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/pulls">
+    <img src="https://img.shields.io/github/issues-pr/CoreyLeath-code/TrojanChat" alt="Open pull requests">
+  </a>
+  <a href="https://github.com/CoreyLeath-code/TrojanChat/stargazers">
+    <img src="https://img.shields.io/github/stars/CoreyLeath-code/TrojanChat?style=social" alt="GitHub stars">
+  </a>
+</p>
 
 TrojanChat is a production-hardened, multi-client chat architecture optimized for high-concurrency environments. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
 
