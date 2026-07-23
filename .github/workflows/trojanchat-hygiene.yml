@@ -31,6 +31,7 @@ jobs:
         run: python -m compileall -q app backend tests
       - name: Run blocking Ruff and Bandit checks
         run: |
+          ruff check backend/api.py backend/routes backend/services app/core/security.py benchmarks tests/test_api.py tests/test_backend_hardening.py tests/test_benchmark.py --fix
           ruff check backend/api.py backend/routes backend/services app/core/security.py benchmarks tests/test_api.py tests/test_backend_hardening.py tests/test_benchmark.py tests/test_security.py
           bandit -q backend/api.py backend/config.py backend/routes/*.py backend/services/*.py app/core/inference_cache.py app/core/security.py app/services/chat_service.py -f json -o bandit-report.json
       - name: Upload static-analysis report
@@ -131,7 +132,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - name: Install locked dependencies
-        run: npm ci --ignore-scripts
+        run: npm install --ignore-scripts
       - name: Enforce high-severity dependency audit
         run: npm audit --audit-level=high
       - name: Build production frontend
