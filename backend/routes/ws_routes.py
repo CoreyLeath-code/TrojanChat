@@ -28,7 +28,7 @@ class ConnectionManager:
         for connection in connections:
             try:
                 await connection.send_text(message)
-            except Exception:
+            except (ConnectionError, RuntimeError, WebSocketDisconnect):
                 await self.disconnect(connection)
 
 
