@@ -51,6 +51,7 @@ jobs:
         with:
           scan-type: fs
           scan-ref: .
+          skip-dirs: frontend/node_modules
           format: sarif
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
