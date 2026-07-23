@@ -1,3 +1,5 @@
+[![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg?branch=docs%2Fportfolio-readme-production-trojanchat)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml) [![Security](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=docs%2Fportfolio-readme-production-trojanchat)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml) [![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=docs%2Fportfolio-readme-production-trojanchat)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
+
 # TrojanChat
 <p align="center">
   <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml">
