@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request]
+permissions: {contents: read}
+concurrency: {group: ci, cancel-in-progress: true}
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: deps-${{ github.sha }}
+      - name: Detect stack and verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -name '*.py' -print -quit | grep -q .; then
+            python -m pip install --upgrade pip
+            for f in requirements.txt requirements-dev.txt requirements/dev.txt; do [ -f "$f" ] && python -m pip install -r "$f"; done
+            python -m pip install pytest pytest-cov ruff black
+            python -m compileall -q .
+            if [ -d tests ]; then python -m pytest --cov=. --cov-report=xml; fi
+            if [ -f pyproject.toml ] && grep -qE 'ruff|black' pyproject.toml; then python -m ruff check .; python -m ruff format --check .; fi
+          elif [ -f package.json ]; then [ -f package-lock.json ] && npm ci || npm install; npm run lint --if-present; npm test --if-present; npm run build --if-present
+          elif [ -f go.mod ]; then gofmt -l . | tee /tmp/gofmt.out; test ! -s /tmp/gofmt.out; go test ./...
+          elif [ -f Cargo.toml ]; then cargo fmt --all -- --check; cargo clippy --all-targets --all-features -- -D warnings; cargo test --all
+          elif [ -f pom.xml ]; then (./mvnw -B verify || mvn -B verify)
+          elif [ -f CMakeLists.txt ]; then cmake -S . -B build; cmake --build build --parallel; ctest --test-dir build --output-on-failure
+          else echo 'No supported build manifest detected.'; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: coverage, path: coverage.xml, if-no-files-found: ignore}
