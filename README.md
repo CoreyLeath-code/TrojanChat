@@ -138,6 +138,34 @@ substantially reducing peak Python allocations. The experiment does not measure 
 JSON serialization, Redis, database persistence, multi-process contention, CPU utilization, or RSS.
 CI reruns the benchmark on Ubuntu/Python 3.11 and uploads the raw result for per-commit comparison.
 
+## Senior review follow-up: chat quality and clean-clone setup
+
+This section closes the documentation items tracked in [issue #37](https://github.com/CoreyLeath-code/TrojanChat/issues/37). The benchmark values above are bounded in-process storage measurements; they do not represent network, Redis, database, or multi-region SLOs.
+
+### Verification contract
+
+From a clean checkout:
+
+```bash
+python -m venv .venv
+# Linux/macOS: source .venv/bin/activate
+# Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
+pytest -q
+python -m json.tool benchmarks/latest.json
+docker build -t trojanchat:local .
+```
+
+The canonical benchmark is `benchmarks/latest.json`; retain its commit, Python version, message count, iterations, retention bound, and runner details with each comparison. The README's existing 92.57% critical-path coverage, 40,326.50 messages/s throughput, and 4.228 MiB peak allocation figures are benchmark evidence for the stated microbenchmark only. CI remains the source of truth for current coverage, CodeQL, Gitleaks, pip-audit, Trivy, and SBOM status.
+
+### Engineering decisions and failure modes
+
+- **Bounded synchronized retention:** the design trades a measured throughput reduction for substantially lower peak allocations and predictable memory growth.
+- **Async sockets vs. operational simplicity:** the event loop supports high concurrency, but TLS, backpressure, reconnect behavior, and multi-process coordination must be tested as first-class failure modes.
+- **In-memory state vs. horizontal scale:** the current process-local connection map is easy to reason about; Redis or another broker is required for cross-instance fan-out and introduces ordering, delivery, and outage semantics.
+- **Next production step:** add an end-to-end multi-client test with malformed frames, abrupt disconnects, slow consumers, and authentication/TLS enabled; publish its latency and loss results separately from the current storage microbenchmark.
+
+
 ---
 
  Architectural Overview
@@ -163,13 +191,13 @@ The platform splits operations across an event-driven system architecture to eli
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/Trojan3877/TrojanChat.git](https://github.com/Trojan3877/TrojanChat.git)
+    git clone [https://github.com/CoreyLeath-code/TrojanChat.git](https://github.com/Trojan3877/TrojanChat.git)
     cd TrojanChat
     ```
 
 2.  **Initialize Environment & Dependencies:**
     ```bash
-    pip install -r requirements.txt
+    python -m pip install -r requirements.txt
     ```
 
 3.  **Spin Up the Core Infrastructure Engine:**
