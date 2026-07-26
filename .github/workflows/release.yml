@@ -23,7 +23,7 @@ jobs:
           mkdir -p dist
           tar --exclude=.git --exclude=dist -czf dist/trojanchat-${GITHUB_REF_NAME}.tar.gz .
       - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*.tar.gz
           generate_release_notes: true
