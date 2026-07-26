@@ -22,6 +22,7 @@
   <img src="https://img.shields.io/badge/Streamlit-frontend-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
   <img src="https://img.shields.io/badge/Docker-non--root-2496ED?logo=docker&logoColor=white" alt="Docker">
   <img src="https://img.shields.io/badge/SBOM-CycloneDX-2D9CDB" alt="CycloneDX SBOM">
+  <img src="https://img.shields.io/badge/Pinecone-Optional%20Semantic%20Search-00A98F?logo=pinecone&logoColor=white" alt="Pinecone optional semantic search">
 </p>
 
 <p align="center">
@@ -94,6 +95,20 @@ The intended use, excluded use, data/credential handling, model or algorithm lim
 **What should be completed next?**  
 Use the linked production-readiness issue for this repository as the checklist. Resolve missing tests, deployment instructions, observability, supply-chain controls, and release evidence before attaching a production claim.
 
+
+## Optional Pinecone semantic search
+
+TrojanChat keeps Qdrant as the default local vector backend and provides an opt-in Pinecone adapter for hosted retrieval.
+
+```bash
+python -m pip install -r requirements-pinecone.txt
+export VECTOR_SEARCH_BACKEND=pinecone
+export PINECONE_API_KEY=***
+export PINECONE_INDEX_NAME=trojanchat
+export PINECONE_NAMESPACE=trojanchat
+```
+
+Pinecone quality and operations must be benchmarked independently from the existing bounded in-process storage benchmark: record embedding model, corpus revision, top-k, recall@k, p95/p99 latency, error rate, and cost. Keep credentials in deployment secrets and retain Qdrant/local fallback for offline tests.
 
 ## Engineering evidence
 
