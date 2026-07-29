@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 from backend.api import app
+from backend.routes import ws_routes
 from backend.routes.ws_routes import ConnectionManager
 from backend.services.chat_service import ChatService
 from httpx import ASGITransport, AsyncClient
@@ -73,3 +74,33 @@ async def test_connection_manager_connect_and_disconnect() -> None:
     await manager.disconnect(websocket)
     assert websocket not in manager.active_connections
     await asyncio.wait_for(manager.disconnect(websocket), timeout=1)
+
+
+@pytest.mark.asyncio
+async def test_websocket_rejects_oversized_messages_and_disconnects(monkeypatch) -> None:
+    manager = ConnectionManager()
+    monkeypatch.setattr(ws_routes, "manager", manager)
+    websocket = AsyncMock()
+    websocket.receive_text.return_value = "x" * (
+        ws_routes.MAX_WEBSOCKET_MESSAGE_SIZE + 1
+    )
+    manager.broadcast = AsyncMock()
+
+    await ws_routes.websocket_chat_endpoint(websocket)
+
+    websocket.close.assert_awaited_once_with(code=1009, reason="Message too large")
+    manager.broadcast.assert_not_awaited()
+    assert websocket not in manager.active_connections
+
+
+@pytest.mark.asyncio
+async def test_websocket_disconnects_after_unexpected_receive_error(monkeypatch) -> None:
+    manager = ConnectionManager()
+    monkeypatch.setattr(ws_routes, "manager", manager)
+    websocket = AsyncMock()
+    websocket.receive_text.side_effect = RuntimeError("receive failed")
+
+    with pytest.raises(RuntimeError, match="receive failed"):
+        await ws_routes.websocket_chat_endpoint(websocket)
+
+    assert websocket not in manager.active_connections
