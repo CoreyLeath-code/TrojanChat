@@ -1,8 +1,12 @@
 import asyncio
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from typing import List
 
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
 router = APIRouter()
+
+# Keep WebSocket payloads aligned with the HTTP chat endpoint's 2,000-character limit.
+MAX_WEBSOCKET_MESSAGE_SIZE = 2_000
 
 
 class ConnectionManager:
@@ -43,6 +47,11 @@ async def websocket_chat_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
+            if len(data) > MAX_WEBSOCKET_MESSAGE_SIZE:
+                await websocket.close(code=1009, reason="Message too large")
+                break
             await manager.broadcast(data)
     except WebSocketDisconnect:
+        pass
+    finally:
         await manager.disconnect(websocket)
