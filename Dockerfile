@@ -18,10 +18,11 @@ ENV PATH=/opt/venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app
 
-# The base image ships build tooling that is unnecessary at runtime. Removing it
-# also prevents scanners from treating setuptools' vendored build dependencies
-# as remotely exploitable application packages.
-RUN python -m pip uninstall --yes setuptools wheel \
+# The runtime executes Uvicorn from /opt/venv and does not install packages.
+# Remove the base image's package-management tooling and bundled installer
+# payloads so they cannot ship vulnerable vendored dependencies.
+RUN python -m pip uninstall --yes pip setuptools wheel \
+    && rm -rf /usr/local/lib/python3.14/ensurepip \
     && useradd --create-home --uid 10001 appuser
 WORKDIR /app
 

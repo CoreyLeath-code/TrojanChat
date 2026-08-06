@@ -112,6 +112,7 @@ jobs:
         run: |
           pip-audit -r requirements.txt --progress-spinner off --format json --output pip-audit.json
       - name: Upload dependency audit
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: pip-audit-report
