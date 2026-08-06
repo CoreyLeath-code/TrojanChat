@@ -14,3 +14,8 @@ prometheus-client>=0.21.0
 PyJWT>=2.12.0
 passlib[bcrypt]>=1.7.4
 python-json-logger>=2.0.7
+
+# Security floors for transitive packages identified by the container scan.
+cryptography>=50.0.0
+msgpack>=1.2.1
+setuptools>=78.1.1
