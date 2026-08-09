@@ -134,10 +134,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install locked dependencies
         run: npm ci --ignore-scripts
-      - name: Generate compatible frontend security lockfile
+      - name: Capture resolved Next.js lockfile metadata
         run: |
           npm audit fix --package-lock-only --ignore-scripts || true
-          git diff --no-ext-diff -- frontend/package-lock.json
+          node -e "const lock=require('./package-lock.json'); console.log(JSON.stringify(Object.fromEntries(Object.entries(lock.packages).filter(([path])=>path==='node_modules/next'||path.startsWith('node_modules/@next/')))))"
           exit 1
       - name: Build production frontend
         run: npm run build
