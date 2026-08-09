@@ -50,6 +50,23 @@ def app_with_mock_ai():
 
 
 # ---------------------------------------------------------------------------
+# Route registration
+# ---------------------------------------------------------------------------
+
+
+def test_ai_app_registers_chat_router_once(app_with_mock_ai):
+    """The public chat route must have one registration and one handler."""
+    app, _ = app_with_mock_ai
+    chat_routes = [
+        route
+        for route in app.routes
+        if route.path == "/api/chat/" and "POST" in route.methods
+    ]
+
+    assert len(chat_routes) == 1
+
+
+# ---------------------------------------------------------------------------
 # /  — root endpoint
 # ---------------------------------------------------------------------------
 
