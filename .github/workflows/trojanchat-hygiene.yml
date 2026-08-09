@@ -136,7 +136,7 @@ jobs:
         run: npm install --ignore-scripts
       - name: Capture resolved frontend security metadata
         run: |
-          npm audit fix --package-lock-only --ignore-scripts
+          npm audit fix --package-lock-only --ignore-scripts || true
           node -e "const lock=require('./package-lock.json'); console.log(JSON.stringify({next:lock.packages['node_modules/next'],nanoid:lock.packages['node_modules/nanoid'],postcss:lock.packages['node_modules/postcss']}))"
           exit 1
       - name: Build production frontend
