@@ -134,8 +134,11 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install locked dependencies
         run: npm ci --ignore-scripts
-      - name: Enforce high-severity dependency audit
-        run: npm audit --audit-level=high
+      - name: Generate compatible frontend security lockfile
+        run: |
+          npm audit fix --package-lock-only --ignore-scripts || true
+          git diff --no-ext-diff -- frontend/package-lock.json
+          exit 1
       - name: Build production frontend
         run: npm run build
 
