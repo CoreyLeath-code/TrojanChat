@@ -136,7 +136,7 @@ jobs:
         run: npm install --ignore-scripts
       - name: Generate compatible lockfile update
         run: |
-          npm update next --ignore-scripts
+          npm update next --package-lock-only --ignore-scripts
           git diff --no-ext-diff -- frontend/package-lock.json
           exit 1
       - name: Build production frontend
