@@ -136,8 +136,11 @@ jobs:
         run: npm install --ignore-scripts
       - name: Apply non-breaking security updates
         run: npm update next --ignore-scripts
-      - name: Enforce high-severity dependency audit
-        run: npm audit --audit-level=high
+      - name: Generate audited lockfile remediation
+        run: |
+          npm audit fix --package-lock-only --ignore-scripts
+          git diff --no-ext-diff -- frontend/package-lock.json
+          exit 1
       - name: Build production frontend
         run: npm run build
 
