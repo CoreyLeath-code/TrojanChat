@@ -134,10 +134,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install locked dependencies
         run: npm install --ignore-scripts
-      - name: Generate compatible lockfile update
+      - name: Capture resolved frontend security metadata
         run: |
-          npm update next --package-lock-only --ignore-scripts
-          git diff --no-ext-diff -- frontend/package-lock.json
+          npm audit fix --package-lock-only --ignore-scripts
+          node -e "const lock=require('./package-lock.json'); console.log(JSON.stringify({next:lock.packages['node_modules/next'],nanoid:lock.packages['node_modules/nanoid'],postcss:lock.packages['node_modules/postcss']}))"
           exit 1
       - name: Build production frontend
         run: npm run build
