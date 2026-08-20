@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import hmac
 import json
 import logging
 import os
@@ -33,6 +34,10 @@ class ChatServer:
         self.host = host
         self.port = port
         self.active: set[asyncio.StreamWriter] = set()
+        self.identities: dict[asyncio.StreamWriter, str] = {}
+        self.require_auth = os.getenv("REQUIRE_AUTH", "true").lower() not in {"0", "false", "no"}
+        self.auth_token = os.getenv("AUTH_TOKEN", "")
+        self.identity = os.getenv("AUTH_IDENTITY", "authenticated")
         self._server: asyncio.AbstractServer | None = None
 
     @staticmethod
@@ -93,13 +98,39 @@ class ChatServer:
         if recipients:
             await asyncio.gather(*recipients, return_exceptions=True)
 
+    async def _authenticate(
+        self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter, peer: Any
+    ) -> bool:
+        """Authenticate the required first frame without trusting a client user field."""
+        if not self.require_auth:
+            self.identities[writer] = "unauthenticated-development"
+            return True
+        if not self.auth_token:
+            await self._audit("AUTH_CONFIGURATION_REJECTED", "AUTH_TOKEN is not configured", peer)
+            return False
+        frame = await self._read_frame(reader, peer)
+        if not frame:
+            return False
+        try:
+            auth = json.loads(frame.decode("utf-8"))
+            token = auth.get("token") if isinstance(auth, dict) else None
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            token = None
+        if not isinstance(token, str) or not hmac.compare_digest(token, self.auth_token):
+            await self._audit("AUTH_REJECTED", "invalid authentication frame", peer)
+            return False
+        self.identities[writer] = self.identity
+        return True
+
     async def handle_client(
         self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
     ) -> None:
         peer = writer.get_extra_info("peername")
-        self.active.add(writer)
-        log.info("Client connected: %s", peer)
         try:
+            if not await self._authenticate(reader, writer, peer):
+                return
+            self.active.add(writer)
+            log.info("Authenticated client connected: %s", peer)
             while frame := await self._read_frame(reader, peer):
                 try:
                     secure = BackendSecurityManager.validate_and_sanitize_payload(frame)
@@ -109,7 +140,7 @@ class ChatServer:
 
                 await self.broadcast(
                     {
-                        "user": secure["user"],
+                        "user": self.identities[writer],
                         "text": secure["text"],
                         "timestamp": datetime.now(timezone.utc).isoformat(),
                     },
@@ -126,6 +157,7 @@ class ChatServer:
 
     async def disconnect_client(self, writer: asyncio.StreamWriter) -> None:
         self.active.discard(writer)
+        self.identities.pop(writer, None)
         writer.close()
         try:
             await writer.wait_closed()
