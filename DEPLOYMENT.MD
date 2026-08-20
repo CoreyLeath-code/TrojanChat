@@ -25,7 +25,7 @@ TrojanChat is designed to be:
 ### Steps
 
 ```bash
-git clone https://github.com/Trojan3877/TrojanChat.git
+git clone https://github.com/CoreyLeath-code/TrojanChat.git
 cd TrojanChat
 cp .env.example .env
 # Edit .env with your API keys

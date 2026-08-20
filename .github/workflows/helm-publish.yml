@@ -25,7 +25,7 @@ jobs:
 
       - name: Create or update Helm repo index
         run: |
-          helm repo index packaged-charts --url https://Trojan3877.github.io/AlgoQuant-Backtester-Signal-Engine/helm
+          helm repo index packaged-charts --url https://CoreyLeath-code.github.io/AlgoQuant-Backtester-Signal-Engine/helm
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

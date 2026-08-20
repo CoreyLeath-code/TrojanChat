@@ -45,7 +45,9 @@
   </a>
 </p>
 
-TrojanChat is a production-hardened, multi-client chat architecture optimized for high-concurrency environments. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
+TrojanChat's supported deployable is the Python asyncio broadcast server. Everything under `experiments/` is unsupported work in progress.
+
+TrojanChat is a single-process asyncio broadcast server for newline-delimited JSON chat messages. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
 
 
 ## Production Readiness Guide
@@ -54,25 +56,36 @@ TrojanChat is a production-hardened, multi-client chat architecture optimized fo
 
 [![CI](https://img.shields.io/github/actions/workflow/status/CoreyLeath-code/TrojanChat/ci.yml?branch=main&label=CI)](https://github.com/CoreyLeath-code/TrojanChat/actions) [![License](https://img.shields.io/github/license/CoreyLeath-code/TrojanChat)](https://github.com/CoreyLeath-code/TrojanChat/blob/main/LICENSE)
 
-### Architecture flowchart
+### System design flowchart
 
 ```mermaid
 flowchart LR
-    Client --> Gateway --> Services[API + workers] --> Events[(Event bus)] --> Store[(State)]
+    Client --> TLS[TLS when configured] --> Server[Asyncio broadcast server]
+    Server --> Auth[First-frame authentication]
+    Auth --> Framing[Bounded NDJSON framing]
+    Framing --> Validation[Security validation]
+    Validation --> Broadcast[Backpressure-aware fan-out]
+    Server --> Audit[Security audit log]
 ```
 
-### Quickstart and local validation
+### Quick start and reproducibility
 
 The supported local path should be reproducible from a clean checkout. The inferred stack for this repository is **Python/platform services**.
 
 ```bash
-python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+python -m venv .venv
+# Linux/macOS: source .venv/bin/activate
+# Windows: .venv\\Scripts\\Activate.ps1
+pip install -r requirements-dev.txt
+export AUTH_TOKEN=replace-me  # PowerShell: $env:AUTH_TOKEN='replace-me'
+python server.py
 pytest -q
+ruff check .
 ```
 
 If the project uses external services, model artifacts, cloud credentials, or private data, start them through documented local fixtures or mocks. Never place secrets or identifiable records in the repository.
 
-### Research-style metrics and benchmarks
+### Research-style benchmark protocol
 
 | Evidence | Required record |
 |---|---|
@@ -206,7 +219,7 @@ The platform splits operations across an event-driven system architecture to eli
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/CoreyLeath-code/TrojanChat.git](https://github.com/Trojan3877/TrojanChat.git)
+    git clone [https://github.com/CoreyLeath-code/TrojanChat.git](https://github.com/CoreyLeath-code/TrojanChat.git)
     cd TrojanChat
     ```
 

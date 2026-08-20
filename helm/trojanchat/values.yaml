@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: trojan3877/trojanchat
+  repository: coreyleath-code/trojanchat
   pullPolicy: IfNotPresent
   tag: "latest"
 

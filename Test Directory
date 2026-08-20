@@ -1,9 +1,0 @@
-helm plugin install https://github.com/quintush/helm-unittest
-
-
-
-
-helm/trojanchat/
-└── tests/
-    ├── values_test.yaml
-    └── deployment_test.yaml
