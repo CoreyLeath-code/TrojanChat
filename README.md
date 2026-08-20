@@ -1,289 +1,168 @@
-[![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg?branch=docs%2Fportfolio-readme-production-trojanchat)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml) [![Security](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=docs%2Fportfolio-readme-production-trojanchat)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml) [![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=docs%2Fportfolio-readme-production-trojanchat)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
-
 # TrojanChat
-<p align="center">
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml">
-    <img src="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/trojanchat-hygiene.yml/badge.svg?branch=main" alt="CI">
-  </a>
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml">
-    <img src="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=main" alt="Benchmarks">
-  </a>
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml">
-    <img src="https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=main" alt="Security">
-  </a>
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/security/code-scanning">
-    <img src="https://img.shields.io/badge/CodeQL-enabled-2F80ED?logo=github&logoColor=white" alt="CodeQL">
-  </a>
-</p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/FastAPI-backend-009688?logo=fastapi&logoColor=white" alt="FastAPI">
-  <img src="https://img.shields.io/badge/Streamlit-frontend-FF4B4B?logo=streamlit&logoColor=white" alt="Streamlit">
-  <img src="https://img.shields.io/badge/Docker-non--root-2496ED?logo=docker&logoColor=white" alt="Docker">
-  <img src="https://img.shields.io/badge/SBOM-CycloneDX-2D9CDB" alt="CycloneDX SBOM">
-  <img src="https://img.shields.io/badge/Pinecone-Optional%20Semantic%20Search-00A98F?logo=pinecone&logoColor=white" alt="Pinecone optional semantic search">
-</p>
+> A supported single-process Python asyncio broadcast server for newline-delimited JSON (NDJSON) chat messages. The server provides bounded framing, optional TLS, first-frame token authentication, input validation, audit logging, and backpressure-aware fan-out.
 
-<p align="center">
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/releases">
-    <img src="https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?include_prereleases&sort=semver" alt="Release">
-  </a>
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/CoreyLeath-code/TrojanChat" alt="License">
-  </a>
-  <img src="https://img.shields.io/github/last-commit/CoreyLeath-code/TrojanChat/main" alt="Last commit">
-  <img src="https://img.shields.io/github/repo-size/CoreyLeath-code/TrojanChat" alt="Repository size">
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/issues">
-    <img src="https://img.shields.io/github/issues/CoreyLeath-code/TrojanChat" alt="Open issues">
-  </a>
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/pulls">
-    <img src="https://img.shields.io/github/issues-pr/CoreyLeath-code/TrojanChat" alt="Open pull requests">
-  </a>
-  <a href="https://github.com/CoreyLeath-code/TrojanChat/stargazers">
-    <img src="https://img.shields.io/github/stars/CoreyLeath-code/TrojanChat?style=social" alt="GitHub stars">
-  </a>
-</p>
+[![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/ci.yml)
+[![Security & supply chain](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
+[![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
+[![License](https://img.shields.io/github/license/CoreyLeath-code/TrojanChat)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Protocol](https://img.shields.io/badge/protocol-NDJSON-4B8BBE)](#wire-protocol)
 
-TrojanChat's supported deployable is the Python asyncio broadcast server. Everything under `experiments/` is unsupported work in progress.
+## Scope and status
 
-TrojanChat is a single-process asyncio broadcast server for newline-delimited JSON chat messages. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
+The supported deployable is [`server.py`](server.py): a process-local asyncio broadcast server. It is **not** a horizontally scaled chat service, durable message store, or an end-to-end production deployment. Files under [`experiments/`](experiments/) are unsupported work in progress and are outside the supported runtime and verification scope.
 
+## Quick start
 
-## Production Readiness Guide
+### Prerequisites
 
-> This section is the portfolio audit entry point for **TrojanChat**. It describes an engineering promotion path; it is not a claim that the repository is already production-authorized.
+- Python 3.11 or later
+- An `AUTH_TOKEN` value for the default authenticated mode
+- Docker, optionally, to build the repository image
 
-[![CI](https://img.shields.io/github/actions/workflow/status/CoreyLeath-code/TrojanChat/ci.yml?branch=main&label=CI)](https://github.com/CoreyLeath-code/TrojanChat/actions) [![License](https://img.shields.io/github/license/CoreyLeath-code/TrojanChat)](https://github.com/CoreyLeath-code/TrojanChat/blob/main/LICENSE)
+### Run locally
 
-### System design flowchart
+```bash
+git clone https://github.com/CoreyLeath-code/TrojanChat.git
+cd TrojanChat
+python -m venv .venv
+# Linux/macOS
+source .venv/bin/activate
+# PowerShell
+# .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
+
+# Required by default. Choose a strong value outside source control.
+export AUTH_TOKEN='replace-me'
+# PowerShell: $env:AUTH_TOKEN = 'replace-me'
+
+python server.py
+```
+
+By default the server listens on `tcp://0.0.0.0:8888`. Configure `HOST`, `PORT`, `LOG_LEVEL`, `MAX_MESSAGE_BYTES` (default `65536`), and `DRAIN_TIMEOUT_S` (default `5`) through the environment. TLS is enabled only when both `TLS_CERT_FILE` and `TLS_KEY_FILE` are configured; otherwise the server logs that TLS is disabled.
+
+## Wire protocol
+
+Every message is one UTF-8 JSON object terminated by `\n`. With the default `REQUIRE_AUTH=true`, the first frame must contain the configured token:
+
+```json
+{"token":"replace-me"}
+```
+
+Subsequent client frames must include `user` and `text` fields, for example:
+
+```json
+{"user":"display-name","text":"hello"}
+```
+
+The server validates and sanitizes the payload, but does not trust the client-provided `user` value for broadcasts. Broadcast events use the server-bound identity (`AUTH_IDENTITY`, default `authenticated`) and include a UTC ISO-8601 timestamp. Malformed frames are audited and skipped; oversized frames, failed authentication, or slow/disconnected writers are disconnected.
+
+## Architecture
 
 ```mermaid
 flowchart LR
-    Client --> TLS[TLS when configured] --> Server[Asyncio broadcast server]
-    Server --> Auth[First-frame authentication]
-    Auth --> Framing[Bounded NDJSON framing]
-    Framing --> Validation[Security validation]
-    Validation --> Broadcast[Backpressure-aware fan-out]
-    Server --> Audit[Security audit log]
+    Client["TCP client"] --> TLS{"TLS certificate and key configured?"}
+    TLS -->|yes| TLSListener["TLS asyncio listener"]
+    TLS -->|no| PlainListener["TCP asyncio listener"]
+    TLSListener --> Auth["First-frame token check"]
+    PlainListener --> Auth
+    Auth -->|valid| Frame["Bounded NDJSON frame reader"]
+    Auth -->|invalid| Reject["Audit and close"]
+    Frame --> Validate["Validate and sanitize payload"]
+    Validate --> Broadcast["Snapshot fan-out with drain timeout"]
+    Validate --> Audit["Security audit log"]
+    Broadcast --> Peers["Authenticated peer writers"]
 ```
 
-### Quick start and reproducibility
+### System design flow
 
-The supported local path should be reproducible from a clean checkout. The inferred stack for this repository is **Python/platform services**.
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Asyncio server
+    participant A as Security manager
+    participant P as Peer clients
+
+    C->>S: {"token":"..."}\n
+    S->>S: constant-time token comparison
+    alt token invalid
+        S->>A: audit authentication rejection
+        S-->>C: close connection
+    else token valid
+        S->>S: bind server-side identity
+        C->>S: {"user":"...","text":"..."}\n
+        S->>A: validate and sanitize
+        S->>S: add UTC timestamp and bound identity
+        S->>P: NDJSON broadcast (drain timeout)
+        opt slow or disconnected peer
+            S->>S: remove and close peer
+        end
+    end
+```
+
+## Reproducibility and verification
+
+Run the supported checks from a clean checkout after installing `requirements-dev.txt`:
 
 ```bash
-python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
-# Windows: .venv\\Scripts\\Activate.ps1
-pip install -r requirements-dev.txt
-export AUTH_TOKEN=replace-me  # PowerShell: $env:AUTH_TOKEN='replace-me'
-python server.py
-pytest -q
 ruff check .
-```
-
-If the project uses external services, model artifacts, cloud credentials, or private data, start them through documented local fixtures or mocks. Never place secrets or identifiable records in the repository.
-
-### Research-style benchmark protocol
-
-| Evidence | Required record |
-|---|---|
-| Correctness | Test command, commit SHA, runtime, and pass/fail result |
-| Performance | Warm-up, sample count, concurrency, median, p95, p99, throughput, and memory |
-| Data/model quality | Dataset version, split strategy, leakage controls, calibration, subgroup results, and uncertainty |
-| Runtime | Image digest, health-check latency, resource limits, and rollback target |
-| Security | Dependency, secret, SAST, container, and SBOM results |
-
-A benchmark number belongs in a versioned artifact tied to a commit and hardware/runtime description. Engineering benchmarks must not be presented as clinical, financial, safety, or model-quality validation without the appropriate domain evidence.
-
-### Extended Q&A
-
-**What is production-ready for this repository?**  
-A reproducible build, tested public contract, controlled configuration, observable runtime, documented security boundary, versioned artifacts, and a tested rollback path.
-
-**What must remain explicit?**  
-The intended use, excluded use, data/credential handling, model or algorithm limitations, and which metrics are measured versus aspirational.
-
-**What should be completed next?**  
-Use the linked production-readiness issue for this repository as the checklist. Resolve missing tests, deployment instructions, observability, supply-chain controls, and release evidence before attaching a production claim.
-
-
-## Optional Pinecone semantic search
-
-TrojanChat keeps Qdrant as the default local vector backend and provides an opt-in Pinecone adapter for hosted retrieval.
-
-```bash
-python -m pip install -r requirements-pinecone.txt
-export VECTOR_SEARCH_BACKEND=pinecone
-export PINECONE_API_KEY=***
-export PINECONE_INDEX_NAME=trojanchat
-export PINECONE_NAMESPACE=trojanchat
-```
-
-Pinecone quality and operations must be benchmarked independently from the existing bounded in-process storage benchmark: record embedding model, corpus revision, top-k, recall@k, p95/p99 latency, error rate, and cost. Keep credentials in deployment secrets and retain Qdrant/local fallback for offline tests.
-
-## Engineering evidence
-
-| Evidence | Current result | Enforcement |
-|---|---:|---|
-| Unit + integration tests | 30 passing locally | Python 3.11/3.12 CI matrix |
-| Critical-path coverage | 92.57% | CI fails below 90% |
-| Median / P99 write latency | 1,239.880 / 1,303.501 ms per 50k-message run | Reproducible benchmark artifact |
-| Throughput | 40,326.50 messages/s | Regression budget: no worse than -15% |
-| Peak Python memory | 4.228 MiB | 80.06% below legacy baseline |
-| Static analysis | Ruff + Bandit | Blocking; JSON report retained |
-| Security | CodeQL, Gitleaks, pip-audit, Trivy | Blocking on secrets and actionable vulnerabilities |
-| Supply chain | CycloneDX SBOM + Dependabot | Artifact per run; weekly updates |
-
-The reference benchmark uses Windows 11, Python 3.12.13, 50,000 messages, seven iterations,
-and a 10,000-message retention bound. Results describe this microbenchmarkâ€”not end-to-end network
-latency or a production SLO. See the [benchmark methodology](benchmarks/benchmark_report.md),
-[audit](docs/AUDIT.md), [architecture](ARCHITECTURE.md), [deployment guide](DEPLOYMENT.MD), and
-[production checklist](docs/PRODUCTION_CHECKLIST.md).
-
-## Research benchmark
-
-**Question.** Can bounded, synchronized retention stop unbounded memory growth without exceeding a
-15% write-throughput regression budget?
-
-| Metric | Legacy list | Bounded, synchronized store | Relative change |
-|---|---:|---:|---:|
-| Mean latency / 50k writes | 1,141.831 ms | 1,237.607 ms | +8.4% |
-| Median latency / 50k writes | 1,155.519 ms | 1,239.880 ms | +7.3% |
-| P95 / P99 latency | 1,221.577 ms | 1,303.501 ms | +6.7% |
-| Minimum / maximum latency | 1,063.323 / 1,221.577 ms | 1,180.249 / 1,303.501 ms | observed range |
-| Throughput | 43,270.60 msg/s | 40,326.50 msg/s | **âˆ’6.8%** |
-| Peak Python allocations | 21.205 MiB | 4.228 MiB | **âˆ’80.06%** |
-
-**Method.** Seven independent iterations insert 50,000 structurally identical messages. Both
-variants generate UUID4 identifiers and UTC timestamps; only storage and synchronization differ.
-Latency uses `time.perf_counter`, memory uses `tracemalloc`, and throughput is derived from median
-elapsed time. The raw, versioned result is [`benchmarks/latest.json`](benchmarks/latest.json).
-
-**Interpretation.** The optimized store remains inside the pre-declared 15% throughput budget while
-substantially reducing peak Python allocations. The experiment does not measure network transport,
-JSON serialization, Redis, database persistence, multi-process contention, CPU utilization, or RSS.
-CI reruns the benchmark on Ubuntu/Python 3.11 and uploads the raw result for per-commit comparison.
-
-## Senior review follow-up: chat quality and clean-clone setup
-
-This section closes the documentation items tracked in [issue #37](https://github.com/CoreyLeath-code/TrojanChat/issues/37). The benchmark values above are bounded in-process storage measurements; they do not represent network, Redis, database, or multi-region SLOs.
-
-### Verification contract
-
-From a clean checkout:
-
-```bash
-python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
-# Windows: .venv\Scripts\activate
-python -m pip install -r requirements.txt
 pytest -q
+python -m benchmarks.run_benchmark --output benchmarks/latest.json
+python -m pytest tests/test_benchmark.py -q
 python -m json.tool benchmarks/latest.json
 docker build -t trojanchat:local .
 ```
 
-The canonical benchmark is `benchmarks/latest.json`; retain its commit, Python version, message count, iterations, retention bound, and runner details with each comparison. The README's existing 92.57% critical-path coverage, 40,326.50 messages/s throughput, and 4.228 MiB peak allocation figures are benchmark evidence for the stated microbenchmark only. CI remains the source of truth for current coverage, CodeQL, Gitleaks, pip-audit, Trivy, and SBOM status.
+The CI workflow runs the test suite with coverage. The benchmark workflow reruns the storage microbenchmark, verifies that the generated throughput change is no worse than its predeclared `-15%` budget, and uploads `benchmarks/latest.json` and `benchmarks/benchmark_report.md` as artifacts. The security-and-supply-chain workflow runs secret scanning, filesystem and container scanning, and produces a CycloneDX SBOM artifact.
 
-### Engineering decisions and failure modes
+For comparable results, record the commit SHA, command, Python version, operating system, CPU/memory characteristics, benchmark parameters, and the generated JSON artifact. Do not compare host-to-host values as a regression result without matching those conditions.
 
-- **Bounded synchronized retention:** the design trades a measured throughput reduction for substantially lower peak allocations and predictable memory growth.
-- **Async sockets vs. operational simplicity:** the event loop supports high concurrency, but TLS, backpressure, reconnect behavior, and multi-process coordination must be tested as first-class failure modes.
-- **In-memory state vs. horizontal scale:** the current process-local connection map is easy to reason about; Redis or another broker is required for cross-instance fan-out and introduces ordering, delivery, and outage semantics.
-- **Next production step:** add an end-to-end multi-client test with malformed frames, abrupt disconnects, slow consumers, and authentication/TLS enabled; publish its latency and loss results separately from the current storage microbenchmark.
+## Research-style benchmark evidence
 
+The committed artifact [`benchmarks/latest.json`](benchmarks/latest.json) records a **bounded in-process storage microbenchmark**, not network, TLS, JSON-serialization, Redis/database, multi-process, RSS, or production-SLO performance. It was generated on Windows 11 with Python 3.12.13 using seven iterations of 50,000 messages and a retention limit of 10,000.
 
----
+| Measure | Legacy list baseline | Bounded synchronized store | Observed change |
+|---|---:|---:|---:|
+| Median latency per 50,000 writes | 1,155.519 ms | 1,239.880 ms | +7.3% |
+| Throughput | 43,270.60 messages/s | 40,326.50 messages/s | -6.8% |
+| Peak Python allocations | 21.205 MiB | 4.228 MiB | -80.06% |
 
- Architectural Overview
+**Method.** Each iteration inserts structurally identical messages; the benchmark uses `time.perf_counter` for elapsed time and `tracemalloc` for Python allocations. The comparison is useful only for the stated storage implementation and environment.
 
- <img width="1024" height="572" alt="image" src="https://github.com/user-attachments/assets/d9d6fa43-1152-4550-89b6-bcf2cebdf248" />
+**Interpretation.** This artifact supports a lower-allocation bounded-retention trade-off within the declared throughput budget. It does not establish client capacity, end-to-end latency, security effectiveness, availability, or suitability for any safety-critical use.
 
+## Operational considerations
 
-The platform splits operations across an event-driven system architecture to eliminate thread-starvation issues under scale.
+- **Authentication:** enabled by default; the server rejects connections when `AUTH_TOKEN` is missing or incorrect. Set `REQUIRE_AUTH=false` only for explicitly controlled development use.
+- **TLS:** optional at runtime, not automatic. Set both certificate environment variables before exposing the listener to untrusted networks.
+- **Backpressure:** each peer write is bounded by `DRAIN_TIMEOUT_S`; timed-out or disconnected peers are dropped to prevent one client blocking a broadcast.
+- **Scale:** connection and identity state are process-local. A cross-instance broker and explicit delivery semantics would be required before horizontal scaling.
+- **Persistence:** messages are not durably stored by the supported server.
 
-* **Non-Blocking Core:** Built on top of Python's raw `asyncio` streams API, replacing slow multi-threaded overhead with a high-performance single-threaded asynchronous engine.
-* **Structured Serialization Protocol:** Completely dropped plaintext string messaging in favor of structured JSON payloads, allowing for strict validation boundaries and predictable message framing.
-* **Rootless Isolation Security:** Containers are structurally hardened using explicit multi-stage build patterns, forcing runtime scripts to execute via a dedicated unprivileged user group (`apprunner`).
+## Questions and answers
 
----
+### Why use NDJSON rather than arbitrary socket reads?
 
-## ðŸš€ Getting Started
+NDJSON gives each message an explicit frame boundary. The server reads until a newline with a configured stream limit, allowing it to reject oversized frames instead of treating arbitrary chunk boundaries as messages.
 
-### Prerequisites
-* Python 3.11 or higher
-* Docker (Optional, for containerized isolation)
+### Does the client-selected `user` field determine the broadcast identity?
 
-### Standard Local Setup
+No. The field is still required by the current payload validator, but the server binds the broadcast identity after successful authentication and emits that server-side value in outgoing events.
 
-1.  **Clone the Repository:**
-    ```bash
-    git clone [https://github.com/CoreyLeath-code/TrojanChat.git](https://github.com/CoreyLeath-code/TrojanChat.git)
-    cd TrojanChat
-    ```
+### What happens when a peer is slow or disconnects during a broadcast?
 
-2.  **Initialize Environment & Dependencies:**
-    ```bash
-    python -m pip install -r requirements.txt
-    ```
+The server fans out over a snapshot of active writers. Each `drain()` call has a timeout; connection failures and timeouts remove and close only the affected peer while the remaining fan-out continues.
 
-3.  **Spin Up the Core Infrastructure Engine:**
-    ```bash
-    python server.py
-    ```
+### Is TLS required?
 
-4.  **Connect Distributed Clients (In separate terminals):**
-    ```bash
-    python client.py "Corey"
-    ```
+No. It is opt-in through `TLS_CERT_FILE` and `TLS_KEY_FILE`. A startup warning makes the plaintext mode visible; deployers are responsible for enabling TLS where the threat model requires it.
 
-â”œâ”€â”€ chat_core/
-â”‚   â”œâ”€â”€ __init__.py
-â”‚   â”œâ”€â”€ config.py             # <-- Application security settings & validation rules
-â”‚   â”œâ”€â”€ crypto_broker.py      # <-- Challenge generation and key distribution logic
-â”‚   â””â”€â”€ connection_manager.py # <-- Tier 5: High-concurrency socket tracking state loop
-â”œâ”€â”€ deployment/
-â”‚   â”œâ”€â”€ gateway.conf          # <-- Tier 2: Envoy or Nginx reverse-proxy ingress rules
-â”‚   â”œâ”€â”€ docker-compose.yml    # <-- Full local container environment mesh (Redis, App, Postgres)
-â”‚   â””â”€â”€ Dockerfile            # <-- Minimal production runtime workspace blueprint
-â”œâ”€â”€ tests/
-â”‚   â”œâ”€â”€ unit/                 # <-- Job #3: Asynchronous socket validation benches
-â”‚   â””â”€â”€ schemas/              # <-- Job #7: JSON framing contract tests
-â”œâ”€â”€ dailylog.md               # <-- Maintenance operations history ledger
-â””â”€â”€ requirements.txt          # <-- Managed dependencies
+### Do the benchmark numbers prove real-world chat performance?
 
+No. They measure only the documented in-process storage experiment. Reproduce the benchmark and publish a separate, versioned end-to-end experiment before making network or capacity claims.
 
- Engineering Roadmap
-* [ ] **TLS/SSL Implementation:** Wrap connection initializations inside native `ssl.SSLContext` primitives to enforce data encryption in transit.
-* [ ] **Horizontal Scale Broker:** Integrate a Redis Pub/Sub backplane layer to cleanly sync chat messages across multi-container instances.
-* [ ] **Unit Test Suite:** Build comprehensive `pytest-asyncio` coverage to automatically validate connection handshakes and packet boundaries during CI/CD triggers.
-    
+## License
 
-Q1: Why use an Asynchronous Event Loop (asyncio) instead of traditional Multi-threading?
-A: Multi-threaded architectures assign a dedicated operating system thread to every single connected client socket. When scaling up to thousands of concurrent users, this model hits a bottleneck due to extreme RAM consumption (each thread pre-allocates stack memory) and massive CPU overhead caused by continuous thread context-switching.
-
-TrojanChat uses a single-threaded asynchronous event loop via asyncio. It utilizes multiplexed, non-blocking I/O system calls underneath the hood. When a socket is waiting for network data packets to arrive, it yields control back to the central event loop, enabling a single thread to smoothly manage thousands of active user data streams without breaking a sweat.
-
-Q2: How does the application prevent data injection or cross-site script (XSS) delivery?
-A: The platform implements defensive validation boundaries right at the ingestion layer:
-
-Structural Enforcement: The backend drops raw plaintext and forces strict JSON layout checks. If a packet cannot be parsed into our target schema via json.loads(), it triggers a localized exception and drops the packet instantly.
-
-Type Enforcement & Whitespace Trimming: The server extracts keys explicitly, forces type constraints, and trims down text fields via .strip().
-
-Escaping Responsibilities: While basic script payloads are safely contained as text strings within the backend data stream, frontend interfaces reading from the stream treat the message string as immutable raw text rather than executable markup code, eliminating downstream script execution hazards.
-
-Q3: What happens when a network connection suddenly drops or behaves erratically?
-A: Traditional systems can suffer from socket resource leaks or frozen application states if a client drops offline abruptly. TrojanChat manages this through isolated, defensive write boundaries (_safe_write).
-
-If a data write fails or throws an unhandled socket error, the server intercepts the exception immediately, bypasses global runtime crashes, purges that specific client's memory address pointer from the central tracking array (self.active_connections), and formally closes the socket file descriptor to prevent kernel-level file descriptor resource exhaustion.
-
-Q4: How can this application scale horizontally to support millions of concurrent users across multiple regions?
-A: Currently, the active connection mapping exists locally within the server's process memory space (self.active_connections). To scale horizontally across multiple cloud instances or Kubernetes clusters behind a global load balancer, the in-memory array can be supplemented with an external Redis Pub/Sub broker.
-
-When Instance A receives a chat payload from an active socket, it publishes that JSON payload to a central Redis cluster topic. All other running application instances subscribing to that Redis topic pick up the message and broadcast it out concurrently to their own locally connected client pools.
-
-### Building the Image
-```bash
-docker build -t trojanchat:latest .
+This project is available under the [MIT License](LICENSE).
