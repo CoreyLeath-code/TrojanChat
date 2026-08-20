@@ -45,7 +45,9 @@
   </a>
 </p>
 
-TrojanChat is a production-hardened, multi-client chat architecture optimized for high-concurrency environments. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
+TrojanChat's supported deployable is the Python asyncio broadcast server. Everything under `experiments/` is unsupported work in progress.
+
+TrojanChat is a single-process asyncio broadcast server for newline-delimited JSON chat messages. Moving away from standard blocking network sockets, this platform leverages asynchronous event loops to maintain thousands of concurrent connections efficiently while maintaining structural memory efficiency.
 
 
 ## Production Readiness Guide
@@ -206,7 +208,7 @@ The platform splits operations across an event-driven system architecture to eli
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/CoreyLeath-code/TrojanChat.git](https://github.com/Trojan3877/TrojanChat.git)
+    git clone [https://github.com/CoreyLeath-code/TrojanChat.git](https://github.com/CoreyLeath-code/TrojanChat.git)
     cd TrojanChat
     ```
 

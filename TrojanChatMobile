@@ -1,7 +1,0 @@
-npx react-native init TrojanChatMobile
-
-TrojanChat/
-├── client/
-├── server/
-├── mobile/          ← newly renamed React Native project
-└── ...

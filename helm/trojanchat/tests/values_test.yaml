@@ -1,7 +1,7 @@
 # Sample override for testing
 replicaCount: 3
 image:
-  repository: trojan3877/trojanchat
+  repository: coreyleath-code/trojanchat
   tag: v1.2.3
 service:
   type: LoadBalancer
