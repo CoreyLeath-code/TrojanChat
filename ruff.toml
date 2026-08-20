@@ -1,0 +1,2 @@
+# The supported deployable is the asyncio broadcast server.
+include = ["server.py", "tests/test_server_transport.py"]
