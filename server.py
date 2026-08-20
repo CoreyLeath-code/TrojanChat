@@ -1,117 +1,181 @@
+"""Single-process asyncio broadcast server with newline-delimited JSON framing."""
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
+import os
+import signal
+import ssl
 import sys
+from datetime import datetime, timezone
+from typing import Any
 
-# Import your defensive security middleware layer
-# (Adjust this to "from backendsecurity import BackendSecurityManager" if placed in the root directory)
-from app.middleware.backendsecurity import BackendSecurityManager
+from backendsecurity import BackendSecurityManager
 
-# Configure production-grade structured logging
+MAX_MESSAGE_BYTES = int(os.getenv("MAX_MESSAGE_BYTES", str(64 * 1024)))
+DRAIN_TIMEOUT_S = float(os.getenv("DRAIN_TIMEOUT_S", "5"))
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", "8888"))
+
 logging.basicConfig(
-    level=logging.INFO,
+    level=os.getenv("LOG_LEVEL", "INFO").upper(),
     format="%(asctime)s [%(levelname)s] Server: %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
+log = logging.getLogger(__name__)
 
-class ProductionChatServer:
-    def __init__(self, host: str = '0.0.0.0', port: int = 8888):
+
+class ChatServer:
+    """Single-process async broadcast server for newline-delimited JSON messages."""
+
+    def __init__(self, host: str = HOST, port: int = PORT) -> None:
         self.host = host
         self.port = port
-        self.active_connections = set()
+        self.active: set[asyncio.StreamWriter] = set()
+        self._server: asyncio.AbstractServer | None = None
 
-    async def broadcast(self, message_dict: dict, exclude_writer: asyncio.StreamWriter = None):
-        """Concurrently broadcasts a validated JSON payload to all active clients."""
-        if not self.active_connections:
-            return
+    @staticmethod
+    def tls_context_from_environment() -> ssl.SSLContext | None:
+        cert_file = os.getenv("TLS_CERT_FILE")
+        key_file = os.getenv("TLS_KEY_FILE")
+        if not cert_file and not key_file:
+            log.warning("TLS disabled; set TLS_CERT_FILE and TLS_KEY_FILE to enable it.")
+            return None
+        if not cert_file or not key_file:
+            raise ValueError("TLS_CERT_FILE and TLS_KEY_FILE must be set together.")
 
-        payload = json.dumps(message_dict).encode('utf-8')
-        
-        # Build non-blocking concurrent write tasks
-        tasks = [
-            self._safe_write(writer, payload)
-            for writer in self.active_connections
-            if writer != exclude_writer
-        ]
-        
-        if tasks:
-            await asyncio.gather(*tasks, return_exceptions=True)
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain(certfile=cert_file, keyfile=key_file)
+        return context
 
-    async def _safe_write(self, writer: asyncio.StreamWriter, payload: bytes):
-        """Executes defensive, error-isolated writes to a single client socket."""
+    async def _audit(self, event_type: str, details: str, peer: Any) -> None:
+        BackendSecurityManager.audit_security_event(
+            event_type=event_type, details=details, IP_peer=peer
+        )
+
+    async def _read_frame(
+        self, reader: asyncio.StreamReader, peer: Any
+    ) -> bytes | None:
         try:
-            writer.write(payload)
-            await writer.drain()
-        except Exception as e:
-            logging.debug(f"Write failure encountered. Removing client: {e}")
+            frame = await reader.readuntil(b"\n")
+        except asyncio.IncompleteReadError:
+            return None
+        except asyncio.LimitOverrunError as error:
+            await self._audit("OVERSIZED_FRAME_REJECTED", str(error), peer)
+            return None
+
+        if len(frame) > MAX_MESSAGE_BYTES:
+            await self._audit("OVERSIZED_FRAME_REJECTED", "frame exceeds limit", peer)
+            return None
+        return frame[:-1]
+
+    async def _safe_write(self, writer: asyncio.StreamWriter, payload: bytes) -> None:
+        try:
+            writer.write(payload + b"\n")
+            await asyncio.wait_for(writer.drain(), timeout=DRAIN_TIMEOUT_S)
+        except (ConnectionError, asyncio.TimeoutError) as error:
+            log.info("Dropping slow or disconnected client: %s", error)
+            await self.disconnect_client(writer)
+        except Exception:
+            log.exception("Unexpected client write failure")
             await self.disconnect_client(writer)
 
-    async def handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        """Manages the full network lifecycle of an incoming connection stream."""
-        self.active_connections.add(writer)
-        client_peer = writer.get_extra_info('peername')
-        logging.info(f"Establishment success: Connection recognized from {client_peer}")
+    async def broadcast(
+        self, message: dict[str, Any], exclude_writer: asyncio.StreamWriter | None = None
+    ) -> None:
+        payload = json.dumps(message, separators=(",", ":")).encode("utf-8")
+        recipients = [
+            self._safe_write(writer, payload)
+            for writer in list(self.active)
+            if writer is not exclude_writer
+        ]
+        if recipients:
+            await asyncio.gather(*recipients, return_exceptions=True)
 
+    async def handle_client(
+        self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+    ) -> None:
+        peer = writer.get_extra_info("peername")
+        self.active.add(writer)
+        log.info("Client connected: %s", peer)
         try:
-            while True:
-                # 1. Read raw byte buffers off the socket stream
-                data = await reader.read(4096)
-                if not data:
-                    break # Client closed the connection stream cleanly
-                
-                # 2. Pass incoming raw byte buffers directly through your hardening middleware
+            while frame := await self._read_frame(reader, peer):
                 try:
-                    secure_payload = BackendSecurityManager.validate_and_sanitize_payload(data)
-                    
-                    broadcast_payload = {
-                        "user": secure_payload["user"],
-                        "text": secure_payload["text"],
-                        "timestamp": asyncio.get_event_loop().time()
-                    }
-                    
-                    # 3. Transmit the secured data to all other connected sockets
-                    await self.broadcast(broadcast_payload, exclude_writer=writer)
-                    
-                except (json.JSONDecodeError, ValueError) as security_err:
-                    # Document the intrusion/malformed vector structurally inside the SIEM auditor
-                    BackendSecurityManager.audit_security_event(
-                        event_type="MALFORMED_INPUT_REJECTED",
-                        details=str(security_err),
-                        IP_peer=client_peer
-                    )
-                    continue # Cleanly drop malicious packet frame and keep the socket engine open
+                    secure = BackendSecurityManager.validate_and_sanitize_payload(frame)
+                except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+                    await self._audit("MALFORMED_INPUT_REJECTED", str(error), peer)
+                    continue
 
+                await self.broadcast(
+                    {
+                        "user": secure["user"],
+                        "text": secure["text"],
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    },
+                    exclude_writer=writer,
+                )
+        except (ConnectionError, asyncio.TimeoutError) as error:
+            log.info("Client connection ended: %s", error)
         except asyncio.CancelledError:
-            pass
-        except Exception as e:
-            logging.error(f"Runtime processing exception for client {client_peer}: {e}")
+            raise
+        except Exception:
+            log.exception("Unexpected client processing failure")
         finally:
             await self.disconnect_client(writer)
 
-    async def disconnect_client(self, writer: asyncio.StreamWriter):
-        """Safely purges connection tracking arrays and cuts off hanging descriptors."""
-        if writer in self.active_connections:
-            self.active_connections.remove(writer)
-            client_peer = writer.get_extra_info('peername')
-            logging.info(f"Teardown complete: Connection severed for {client_peer}")
+    async def disconnect_client(self, writer: asyncio.StreamWriter) -> None:
+        self.active.discard(writer)
+        writer.close()
         try:
-            writer.close()
             await writer.wait_closed()
-        except Exception:
+        except (ConnectionError, asyncio.TimeoutError):
             pass
 
-    async def start(self):
-        """Spins up the core network listening loop."""
-        server = await asyncio.start_server(self.handle_client, self.host, self.port)
-        logging.info(f"Production Chat Engine actively listening on custom interface: tcp://{self.host}:{self.port}")
-        async with server:
-            await server.serve_forever()
+    async def close(self) -> None:
+        if self._server is not None:
+            self._server.close()
+            await self._server.wait_closed()
+        await asyncio.gather(
+            *(self.disconnect_client(writer) for writer in list(self.active)),
+            return_exceptions=True,
+        )
+
+    async def start(self) -> None:
+        self._server = await asyncio.start_server(
+            self.handle_client,
+            self.host,
+            self.port,
+            ssl=self.tls_context_from_environment(),
+            limit=MAX_MESSAGE_BYTES,
+        )
+        log.info(
+            "Single-process async broadcast server listening on tcp://%s:%s",
+            self.host,
+            self.port,
+        )
+        async with self._server:
+            await self._server.serve_forever()
+
+
+async def main() -> None:
+    server = ChatServer()
+    loop = asyncio.get_running_loop()
+    stop = asyncio.Event()
+    for signal_name in (signal.SIGINT, getattr(signal, "SIGTERM", signal.SIGINT)):
+        try:
+            loop.add_signal_handler(signal_name, stop.set)
+        except NotImplementedError:
+            pass
+    task = asyncio.create_task(server.start())
+    await stop.wait()
+    task.cancel()
+    await asyncio.gather(task, return_exceptions=True)
+    await server.close()
+
 
 if __name__ == "__main__":
-    server_engine = ProductionChatServer()
     try:
-        asyncio.run(server_engine.start())
+        asyncio.run(main())
     except KeyboardInterrupt:
-        logging.info("Administrative SIGINT caught. Shutting down system modules cleanly.")
+        pass
