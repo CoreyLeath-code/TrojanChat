@@ -2,6 +2,7 @@
 
 > A supported single-process Python asyncio broadcast server for newline-delimited JSON (NDJSON) chat messages. The server provides bounded framing, optional TLS, first-frame token authentication, input validation, audit logging, and backpressure-aware fan-out.
 
+[![Latest Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag&sort=semver)](https://github.com/CoreyLeath-code/TrojanChat/releases/latest)
 [![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/ci.yml)
 [![Security & supply chain](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
 [![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
