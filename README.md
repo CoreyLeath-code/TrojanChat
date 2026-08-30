@@ -142,27 +142,75 @@ The committed artifact [`benchmarks/latest.json`](benchmarks/latest.json) record
 - **Scale:** connection and identity state are process-local. A cross-instance broker and explicit delivery semantics would be required before horizontal scaling.
 - **Persistence:** messages are not durably stored by the supported server.
 
-## Questions and answers
+## Extended questions and answers
 
 ### Why use NDJSON rather than arbitrary socket reads?
 
-NDJSON gives each message an explicit frame boundary. The server reads until a newline with a configured stream limit, allowing it to reject oversized frames instead of treating arbitrary chunk boundaries as messages.
+NDJSON gives each message an explicit frame boundary. The server reads until a newline with a configured stream limit, allowing it to reject oversized frames instead of treating arbitrary TCP chunk boundaries as complete messages.
 
 ### Does the client-selected `user` field determine the broadcast identity?
 
-No. The field is still required by the current payload validator, but the server binds the broadcast identity after successful authentication and emits that server-side value in outgoing events.
+No. The field is still required by the current payload validator, but the server binds the broadcast identity after successful authentication and emits that server-side value in outgoing events. This prevents a client from selecting an arbitrary broadcast identity after authentication.
 
 ### What happens when a peer is slow or disconnects during a broadcast?
 
-The server fans out over a snapshot of active writers. Each `drain()` call has a timeout; connection failures and timeouts remove and close only the affected peer while the remaining fan-out continues.
+The server fans out over a snapshot of active writers. Each `drain()` call has a timeout; connection failures and timeouts remove and close only the affected peer while the remaining fan-out continues. This limits the ability of one slow writer to stall every connected peer.
 
 ### Is TLS required?
 
-No. It is opt-in through `TLS_CERT_FILE` and `TLS_KEY_FILE`. A startup warning makes the plaintext mode visible; deployers are responsible for enabling TLS where the threat model requires it.
+No. It is opt-in through `TLS_CERT_FILE` and `TLS_KEY_FILE`. A startup warning makes plaintext mode visible. Deployers are responsible for enabling TLS when credentials or messages cross an untrusted network.
+
+### What security property does first-frame token authentication provide?
+
+It provides a simple shared-secret admission check before a connection is accepted into the authenticated peer set. The comparison is performed in constant time, and failed authentication is audited and disconnected. It is not a complete identity platform: there are no per-user credentials, token rotation protocol, authorization roles, account recovery flows, or external identity-provider integration in the supported server.
+
+### Why is the client-provided username still accepted if the server does not trust it as identity?
+
+It remains part of the current message schema for compatibility and validation, but authorization and emitted identity are intentionally separated from that field. A future protocol revision could remove or redefine the client field without weakening the current server-side identity boundary.
+
+### Are messages persisted if the server restarts?
+
+No. The supported chat server does not provide durable message history. Connection state and broadcast state are process-local, and a restart loses that transient state. Durable chat history would require a defined storage model, retention policy, schema/versioning rules, recovery behavior, and tests around those guarantees.
+
+### What delivery guarantee does TrojanChat provide?
+
+The supported implementation provides best-effort process-local fan-out to peers that are connected and writable at broadcast time. It does not claim exactly-once, at-least-once, replay, durable acknowledgement, ordered delivery across multiple processes, or offline delivery. Those guarantees would require explicit message identifiers, persistence or a broker, acknowledgement semantics, retry rules, and idempotency handling.
+
+### Can the server scale horizontally across multiple instances?
+
+Not without additional architecture. Each process owns its own peer set and has no cross-instance message bus. Horizontal scaling would require a shared broker or pub/sub layer, cross-instance identity/session decisions, delivery semantics, health/readiness behavior, observability, and failure tests for broker loss and partial instance failure.
+
+### Does backpressure handling guarantee the server cannot be overloaded?
+
+No. The drain timeout protects the broadcast path from one slow writer indefinitely blocking progress, but it is not a complete admission-control or overload-management system. Production-scale overload protection would also consider connection limits, per-client rate limits, queue bounds, CPU/memory saturation, accept-loop pressure, load shedding, and representative concurrent load tests.
+
+### Are malformed and oversized messages handled safely?
+
+The supported framing and validation path bounds message size, validates JSON/message shape, audits malformed inputs, and disconnects on configured oversize conditions. These controls reduce obvious parser and memory-pressure risks, but they do not establish that the service is secure against every malicious-input strategy or denial-of-service scenario.
 
 ### Do the benchmark numbers prove real-world chat performance?
 
-No. They measure only the documented in-process storage experiment. Reproduce the benchmark and publish a separate, versioned end-to-end experiment before making network or capacity claims.
+No. They measure only the documented in-process bounded-storage experiment. The benchmark excludes sockets, TLS, serialization costs, concurrent clients, process scheduling, external storage, proxies, and network variability. A network-capacity claim would require a separate versioned end-to-end load test with concurrency, p50/p95/p99 latency, throughput, errors, saturation, and resource observations.
+
+### Why does the bounded store trade some throughput for lower measured allocations?
+
+The reference benchmark compares a legacy unbounded/list-oriented path with a synchronized bounded-retention implementation. In the recorded environment, the bounded design reduced peak traced Python allocations substantially while staying inside the predeclared throughput-regression budget. That is an engineering trade-off for the measured storage path, not a universal claim that the bounded implementation is faster.
+
+### Does a green CI, security scan, or SBOM mean TrojanChat is production secure?
+
+No. CI, static analysis, secret scanning, image/filesystem scanning, and an SBOM are useful assurance mechanisms, but none proves the absence of vulnerabilities or operational risk. They demonstrate that specific automated checks ran against a specific revision and should be interpreted with the threat model and runtime boundaries documented here.
+
+### What would be required before describing TrojanChat as a production chat service?
+
+At minimum: a defined identity and authorization model; TLS/key lifecycle management; durable or explicitly brokered delivery semantics; horizontal-scale architecture; rate limiting and admission control; representative concurrent load and soak testing; richer runtime metrics and alerting; deployment/rollback procedures; backup/recovery rules if persistence is added; and incident-oriented failure tests for dependency, resource, and network degradation.
+
+### Why keep `experiments/` outside the supported runtime contract?
+
+Separating experimental code from the supported deployable prevents prototypes from silently expanding the repository's claims. A feature should move into the supported surface only after its dependencies, configuration, tests, security implications, failure behavior, documentation, and release path are explicit.
+
+### What is the most defensible claim this repository makes today?
+
+TrojanChat is a tested single-process asyncio NDJSON broadcast-server reference with bounded framing, shared-token admission, server-bound broadcast identity, optional TLS, audit logging, backpressure-aware fan-out, reproducible verification, and versioned engineering artifacts. It is deliberately not represented as a durable, horizontally scaled production messaging platform.
 
 ## License
 
