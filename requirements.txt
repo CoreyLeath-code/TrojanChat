@@ -1,7 +1,7 @@
-openai>=3.3.1
+openai>=3.7.0
 groq>=1.7.0
-streamlit>=1.62.0
-pydantic>=2.13.4
+streamlit>=1.63.0
+pydantic>=2.13.5
 pydantic-settings>=2.15.0
 python-dotenv>=1.2.3
 pandas>=3.0.5
@@ -16,5 +16,5 @@ python-json-logger>=4.2.0
 
 # Security floors for transitive packages identified by the container scan.
 cryptography>=50.0.1
-msgpack>=1.2.1
+msgpack>=1.2.2
 setuptools>=84.0.0
