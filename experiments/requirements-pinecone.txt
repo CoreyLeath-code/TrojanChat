@@ -1,2 +1,2 @@
 # Optional hosted semantic-search backend.
-pinecone>=9.1.0
+pinecone>=10.0.0
