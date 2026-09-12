@@ -1,4 +1,4 @@
-openai>=3.7.0
+openai>=3.10.0
 groq>=1.7.0
 streamlit>=1.63.0
 pydantic>=2.13.5
