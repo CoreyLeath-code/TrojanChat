@@ -1,16 +1,16 @@
-openai>=3.7.0
+openai>=3.14.1
 groq>=1.7.0
-streamlit>=1.63.0
+streamlit>=1.64.0
 pydantic>=2.13.5
 pydantic-settings>=2.15.0
 python-dotenv>=1.2.3
 pandas>=3.0.5
 fastapi>=0.141.1
-uvicorn>=0.52.4
+uvicorn>=0.53.0
 httpx>=0.28.1
 redis>=8.1.0
 prometheus-client>=0.26.0
-PyJWT>=2.13.0
+PyJWT>=2.14.0
 passlib[bcrypt]>=1.7.4
 python-json-logger>=4.2.0
 
