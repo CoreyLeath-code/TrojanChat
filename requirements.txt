@@ -1,20 +1,20 @@
-openai>=3.19.0
+openai>=3.22.1
 groq>=1.7.0
 streamlit>=1.64.0
 pydantic>=2.13.5
 pydantic-settings>=2.15.0
 python-dotenv>=1.2.3
 pandas>=3.0.6
-fastapi>=0.141.1
-uvicorn>=0.53.0
+fastapi>=0.142.1
+uvicorn>=0.54.0
 httpx>=0.28.1
 redis>=8.1.0
 prometheus-client>=0.26.0
-PyJWT>=2.14.0
+PyJWT>=2.15.1
 passlib[bcrypt]>=1.7.4
 python-json-logger>=4.2.0
 
 # Security floors for transitive packages identified by the container scan.
 cryptography>=50.0.1
-msgpack>=1.2.2
+msgpack>=1.2.3
 setuptools>=84.0.0
