@@ -1,11 +1,11 @@
-openai>=3.22.1
+openai>=3.40.0
 groq>=1.7.0
-streamlit>=1.64.0
-pydantic>=2.13.5
-pydantic-settings>=2.15.0
-python-dotenv>=1.2.3
-pandas>=3.0.6
-fastapi>=0.142.1
+streamlit>=1.66.1
+pydantic>=2.14.1
+pydantic-settings>=2.16.1
+python-dotenv>=1.2.4
+pandas>=3.1.0
+fastapi>=0.162.0
 uvicorn>=0.54.0
 httpx>=0.28.1
 redis>=8.1.0
@@ -15,6 +15,6 @@ passlib[bcrypt]>=1.7.4
 python-json-logger>=4.2.0
 
 # Security floors for transitive packages identified by the container scan.
-cryptography>=50.0.1
-msgpack>=1.2.3
-setuptools>=84.0.0
+cryptography>=50.0.2
+msgpack>=1.2.4
+setuptools>=84.2.1
