@@ -1,5 +1,11 @@
 # TrojanChat
 
+<!-- portfolio-lifecycle-badges:start -->
+[![Latest release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag&sort=semver)](https://github.com/CoreyLeath-code/TrojanChat/releases/latest)
+[![Lifecycle documentation](https://img.shields.io/badge/lifecycle-documented-2563eb)](#ownership-promotion-and-operational-lifecycle)
+[![Maintainer](https://img.shields.io/badge/maintainer-Corey%20Leath-111827)](https://github.com/CoreyLeath-code)
+<!-- portfolio-lifecycle-badges:end -->
+
 > A supported single-process Python asyncio broadcast server for newline-delimited JSON (NDJSON) chat messages. The server provides bounded framing, optional TLS, first-frame token authentication, input validation, audit logging, and backpressure-aware fan-out.
 
 [![Latest Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag&sort=semver)](https://github.com/CoreyLeath-code/TrojanChat/releases/latest)
