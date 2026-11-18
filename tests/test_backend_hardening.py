@@ -104,3 +104,15 @@ async def test_websocket_disconnects_after_unexpected_receive_error(monkeypatch)
         await ws_routes.websocket_chat_endpoint(websocket)
 
     assert websocket not in manager.active_connections
+
+
+def test_legacy_entrypoint_uses_canonical_app_without_duplicate_routes() -> None:
+    """Legacy imports must not silently create an unprotected duplicate chat API."""
+    from backend.app.main import app as legacy_app
+
+    assert legacy_app is app
+    # The minimal CI FastAPI stand-in records included routers without a .path;
+    # the endpoint integration tests separately assert both canonical routes exist.
+    route_paths = [getattr(route, "path", None) for route in app.routes]
+    assert route_paths.count("/chat/send") <= 1
+    assert route_paths.count("/chat/history") <= 1

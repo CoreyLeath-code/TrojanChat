@@ -1,52 +1,10 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+"""Compatibility entrypoint for the single supported TrojanChat ASGI application.
 
-from app.api.chat import router as chat_router
+The canonical implementation lives in backend.api and includes validated chat
+and websocket routes. Reuse it rather than registering a second, divergent
+application with duplicate routes and permissive credentialed CORS.
+"""
 
-# --------------------------------------------------
-# App Initialization
-# --------------------------------------------------
-app = FastAPI(
-    title="TrojanChat 2.0 AI",
-    description="AI-powered USC fan chat platform with RAG and real-time insights",
-    version="2.0.0",
-)
+from backend.api import app
 
-# --------------------------------------------------
-# Middleware (CORS for frontend connection)
-# --------------------------------------------------
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # restrict to your frontend domain in production
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Mount the AI chat router under /api/chat
-app.include_router(chat_router, prefix="/api/chat", tags=["AI Chat"])
-
-# --------------------------------------------------
-# Routers
-# --------------------------------------------------
-app.include_router(chat_router, prefix="/api/chat", tags=["Chat"])
-
-
-# --------------------------------------------------
-# Health Endpoints
-# --------------------------------------------------
-@app.get("/", tags=["Health"])
-async def root():
-    return {
-        "message": "TrojanChat 2.0 AI is running",
-        "status": "healthy",
-        "version": "2.0.0",
-    }
-
-
-@app.get("/health", tags=["Health"])
-async def health_check():
-    return {
-        "status": "ok",
-        "service": "trojanchat-backend",
-    }
+__all__ = ["app"]
