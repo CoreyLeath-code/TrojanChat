@@ -8,13 +8,23 @@
 
 > A supported single-process Python asyncio broadcast server for newline-delimited JSON (NDJSON) chat messages. The server provides bounded framing, optional TLS, first-frame token authentication, input validation, audit logging, and backpressure-aware fan-out.
 
-[![Latest Release](https://img.shields.io/github/v/release/CoreyLeath-code/TrojanChat?display_name=tag&sort=semver)](https://github.com/CoreyLeath-code/TrojanChat/releases/latest)
 [![CI](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/ci.yml)
 [![Security & supply chain](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/security-supply-chain.yml)
 [![Benchmarks](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml/badge.svg?branch=main)](https://github.com/CoreyLeath-code/TrojanChat/actions/workflows/benchmarks.yml)
 [![License](https://img.shields.io/github/license/CoreyLeath-code/TrojanChat)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Protocol](https://img.shields.io/badge/protocol-NDJSON-4B8BBE)](#wire-protocol)
+
+## Reviewer map
+
+| Question | Source of evidence |
+|---|---|
+| What is deployed? | [`server.py`](server.py), the supported asyncio NDJSON server |
+| How are messages framed and authenticated? | [Wire protocol](#wire-protocol) and [`tests/test_server_transport.py`](tests/test_server_transport.py) |
+| What are the actual limits? | [Operational considerations](#operational-considerations) and [reproducibility](#reproducibility-and-verification) |
+| How are changes checked? | [CI](.github/workflows/ci.yml) and [security workflow](.github/workflows/security-supply-chain.yml) |
+
+**Important:** a successful local transport test does not demonstrate durable storage, multi-instance delivery, or internet-facing production security. The other language/platform files in this repository are not part of the supported server contract unless documented otherwise.
 
 ## Scope and status
 
