@@ -45,10 +45,10 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     // Basic validation
-    if (!email || !password) {
+    if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
       return res.status(400).json({ error: 'All fields are required.' });
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: { $eq: email } });
     if (!user) {
       return res.status(400).json({ error: 'Invalid credentials.' });
     }
